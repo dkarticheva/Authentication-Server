@@ -5,12 +5,13 @@ import java.io.OutputStream;
 
 public class InputReader {
 	
-	static CommandsExecutor cmd = new CommandsExecutor(new File("src/usersInfo.txt"));
-	static Validator validator = new Validator();
-	private static OutputStream outputStream;
+	static CommandsExecutor cmd;
+	static OutputStream outputStream;
+	//static Validator validator = new Validator();
 	
-	public InputReader(OutputStream output) {
+	public InputReader(OutputStream output, String fileName) {
 		outputStream = output;
+		cmd = new CommandsExecutor(new File(fileName));
 	}
 	
 	public boolean readInput(String line) {

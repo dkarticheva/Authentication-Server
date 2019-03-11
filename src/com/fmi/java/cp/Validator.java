@@ -14,6 +14,11 @@ public class Validator {
 	final static int LASTNAME_INDEX = 7;
 	final static int EMAIL_INDEX = 9;
 	
+	// validation of the commands and their options
+	public boolean isValidCommand(String cmd) {
+		return cmd.equals("register") || cmd.equals("login") || cmd.equals("reset-password") 
+				|| cmd.equals("update-user") || cmd.equals("logout") || cmd.equals("delete-user");
+	}
 	public boolean validateRegisterCommand(String[] words) {
 		return words[USERNAME_INDEX].equals("--username") && words[PASSWORD_INDEX].equals("--password") 
 				&& words[FIRSTNAME_INDEX].equals("--first-name")
@@ -39,6 +44,7 @@ public class Validator {
 		return words[1].equals("–username");
 	}
 	
+	// validation of user properties
 	public boolean validateUser(String userName) {
 		Map<String, User> usrs = CommandsExecutor.getUsers();
 		return usrs.containsKey(userName);
@@ -69,32 +75,13 @@ public class Validator {
 	public boolean alreadyLoggedIn(String userName) {
 		return (CommandsExecutor.getLoggedIn().containsKey(userName));
 	}
-	public boolean isValidCommand(String cmd) {
-		return cmd.equals("register") || cmd.equals("login") || cmd.equals("reset-password") 
-				|| cmd.equals("update-user") || cmd.equals("logout") || cmd.equals("delete-user");
-	}
-	public boolean validOptions(String[] words) {
-		Validator validator = new Validator();
-		switch (words[0]) {
-			case "register" : return validator.validateRegisterCommand(words);
-		
-			case "reset-password" : return validator.validateResetPassword(words);
-			
-			case "update-user" : return validator.validateUpdateUser(words);
-			
-			case "logout" : return validator.validateLogOut(words);
-			
-			case "delete-user" : return validator.validateDeleteUser(words);
-			
-		}
-		if (words[0].equals("login")) {
-			if (words[1].equals("-–username")) {
-				return validator.validateLogIn(words);
-			}
-			else {
-				return validator.validateLogInSesh(words);
+	public boolean isSessionExpired(User user) {
+		Set<Session> ss = CommandsExecutor.getSessions().keySet();
+		for (Session s : ss) {
+			if (CommandsExecutor.getSessions().get(s).equals(user)) {
+				return s.hasExpired();
 			}
 		}
-		return false;
+		return true;
 	}
 }

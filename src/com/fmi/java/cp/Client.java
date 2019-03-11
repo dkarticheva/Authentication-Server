@@ -17,6 +17,31 @@ public class Client {
 	
 	final static int DEFAULT_PORT = 4444;
 	
+	private boolean checkInput(String[] words) {
+		Validator validator = new Validator();
+		switch (words[0]) {
+			case "register" : return validator.validateRegisterCommand(words);
+		
+			case "reset-password" : return validator.validateResetPassword(words);
+			
+			case "update-user" : return validator.validateUpdateUser(words);
+			
+			case "logout" : return validator.validateLogOut(words);
+			
+			case "delete-user" : return validator.validateDeleteUser(words);
+			
+		}
+		if (words[0].equals("login")) {
+			if (words[1].equals("-–username")) {
+				return validator.validateLogIn(words);
+			}
+			else {
+				return validator.validateLogInSesh(words);
+			}
+		}
+		return false;
+	}
+	
 	public Client(InetAddress adr, int port) {
 		try {
 			socket = new Socket(adr, port);
@@ -48,7 +73,7 @@ public class Client {
 			if (!validator.isValidCommand(inputWords[0])) {
 				System.out.println("Invalid command!");
 			}
-			else if (!validator.validOptions(inputWords)) {
+			else if (!checkInput(inputWords)) {
 				System.out.println("Incorrect command options!");
 			}
 			else {

@@ -41,7 +41,8 @@ public class ServerThread extends Thread {
 			if (input == null) {
 				break;
 			}
-			InputReader reader = new InputReader(outputStream);
+			String dataBaseFileName = "src/usersInfo.txt";
+			InputReader reader = new InputReader(outputStream, dataBaseFileName);
 			reader.readInput(input);
 		}
 	}
