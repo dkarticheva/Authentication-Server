@@ -10,10 +10,9 @@ public class User {
 	
 	public User(String username, String password, String firstName, String lastName, String email) {
 		this.username = username;
-		this.password = password;
-		this.firstName = firstName;
 		this.lastName = lastName;
 		this.email = email;
+		setPassword(password);
 	}
 	
 	public String getUsername() {
@@ -25,8 +24,9 @@ public class User {
 	public String getPassword() {
 		return password;
 	}
-	public void setPassword(String password) {
-		this.password = password;
+	public void setPassword(String plainTextPassword) {
+		String hashedPassword = Password.hashPassword(plainTextPassword);
+		password = hashedPassword;
 	}
 	public String getFirstName() {
 		return firstName;

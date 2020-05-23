@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.PrintWriter;
 import java.net.Socket;
 import java.net.SocketException;
 
@@ -24,7 +25,7 @@ public class ServerThread extends Thread {
 		}
 	}
 	
-	private String receiveRequest() {
+	private String receiveClientRequest() {
 		String input = null;
 		try {
 			input = reader.readLine();
@@ -37,9 +38,20 @@ public class ServerThread extends Thread {
 		return input;
 	}
 	
+	
+	public static void sendServerMessageToSocket(String message, OutputStream communicationSocketOutputStream) {
+		
+		PrintWriter socketMessageWriter = new PrintWriter(communicationSocketOutputStream, true);
+		int messageSize = message.length();
+		
+		socketMessageWriter.println(messageSize);
+		socketMessageWriter.print(message);
+		socketMessageWriter.flush();
+	}
+
 	public void run() {
 		while (true) {
-			String input = receiveRequest();
+			String input = receiveClientRequest();
 			if (input == null) {
 				break;
 			}

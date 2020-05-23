@@ -13,20 +13,19 @@ public class RegisterCommand implements Command {
 		String lastName = commandOptions[LASTNAME_INDEX];
 		String email = commandOptions[EMAIL_INDEX];
 		
-		if (CommandsExecutor.getUsers().containsKey(userName)) {
-			CommandsExecutor.sendServerMessageToSocket("The username is already taken, please choose a different one\n", communicationSocketOutputStream);
+		if (UserOperations.isUsernameAlreadyTaken(userName)) {
+			ServerThread.sendServerMessageToSocket("The username is already taken, please choose a different one\n", communicationSocketOutputStream);
 			return false;
 		}
 		
-		User userToRegister = new User(userName, Password.hash(password), firstName, lastName, email);
-		// TODO: remove the chain
-		CommandsExecutor.getUsers().put(userName, userToRegister);
-		CommandsExecutor.updateUsersDetails();
+		User userToRegister = new User(userName, password, firstName, lastName, email);
+		UserOperations.addUser(userToRegister);
+		UserOperations.updateUsersDetails();
 		
 		EmailSender.sendEmail(email);
 		
 		String confirmationMessage = "User %s has been successfully registered\n";
-		CommandsExecutor.sendServerMessageToSocket(String.format(confirmationMessage, userName), communicationSocketOutputStream);
+		ServerThread.sendServerMessageToSocket(String.format(confirmationMessage, userName), communicationSocketOutputStream);
 		
 		return true;
 		

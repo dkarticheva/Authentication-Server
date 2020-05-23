@@ -12,31 +12,29 @@ public class ResetPasswordCommand implements Command{
 		String oldPassword = commandOptions[OLDPASSWORD_INDEX];
 		String newPassword = commandOptions[NEWPASSWORD_INDEX];
 		
-		if (!validator.confirmExistenceOfUserWithUsername(userName)) {
-			CommandsExecutor.sendServerMessageToSocket("Wrong username or password!\n", communicationSocketOutputStream);
+		if (!UserOperations.confirmExistenceOfUserWithUsername(userName)) {
+			ServerThread.sendServerMessageToSocket("Wrong username or password!\n", communicationSocketOutputStream);
 			return false;
 		}
 		
-		// TODO: no chains pls
-		User userToResetPassword = CommandsExecutor.getUsers().get(userName);
-		if (!validator.validatePasswordForUser(userToResetPassword, oldPassword)) {
-			CommandsExecutor.sendServerMessageToSocket("Wrong username or password!\n", communicationSocketOutputStream);
+		User userToResetPassword = UserOperations.getUserByUsername(userName);
+		if (!UserOperations.validatePasswordForUser(userToResetPassword, oldPassword)) {
+			ServerThread.sendServerMessageToSocket("Wrong username or password!\n", communicationSocketOutputStream);
 			return false;
 		}
 		
-		if (validator.isSessionExpiredForUser(userToResetPassword)) {
-			CommandsExecutor.sendServerMessageToSocket("Your session has expired! Please log in again\n", communicationSocketOutputStream);
-			CommandsExecutor.removeExpiredSessionForUser(userName, null);
+		if (SessionOperations.isSessionExpiredForUser(userToResetPassword)) {
+			ServerThread.sendServerMessageToSocket("Your session has expired! Please log in again\n", communicationSocketOutputStream);
+			SessionOperations.removeSessionForUser(userToResetPassword);
 			return false;
 		}
 		
-		userToResetPassword.setPassword(Password.hash(newPassword));
-		// TODO: no chains pls
-		CommandsExecutor.getUsers().put(userName, userToResetPassword);
-		CommandsExecutor.updateUsersDetails();
+		userToResetPassword.setPassword(newPassword);
+		UserOperations.addUser(userToResetPassword);
+		UserOperations.updateUsersDetails();
 		
 		String confirmationMessage = "Password for user %s has been successfully modified\n";
-		CommandsExecutor.sendServerMessageToSocket(String.format(confirmationMessage, userName), communicationSocketOutputStream);
+		ServerThread.sendServerMessageToSocket(String.format(confirmationMessage, userName), communicationSocketOutputStream);
 		return true;
 	}
 

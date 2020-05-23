@@ -5,8 +5,8 @@ import java.security.NoSuchAlgorithmException;
 
 public class Password {
 	
-	// TODO : change this to private
-	public static String hash(String plainTextPassword) {
+	// TODO: clean this
+	private static String hash(String plainTextPassword) {
 		
         String hashedPassword = null;
         try {
@@ -29,6 +29,11 @@ public class Password {
         }
         return hashedPassword;
     }
+	
+	public static String hashPassword(String plainTextPassword) {
+		return hash(plainTextPassword);
+	}
+	
 	public static boolean authenticate(String plainTextPassword, String storedHashedPassword) {
 		
 		String hashedPassword = hash(plainTextPassword);

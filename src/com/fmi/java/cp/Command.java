@@ -13,7 +13,5 @@ public interface Command {
 	final static int LASTNAME_INDEX = 8;
 	final static int EMAIL_INDEX = 10;
 	
-	Validator validator = new Validator();
-	
 	public abstract boolean execute(String[] commandOptions, OutputStream communicationSocketOutputStream);
 }

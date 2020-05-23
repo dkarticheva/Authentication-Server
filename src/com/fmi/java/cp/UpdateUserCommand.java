@@ -8,25 +8,20 @@ public class UpdateUserCommand implements Command {
 	public boolean execute(String[] commandOptions, OutputStream communicationSocketOutputStream) {
 		
 		String sessionId = commandOptions[2];
-		if (!validator.validateSession(sessionId)) {
-			CommandsExecutor.sendServerMessageToSocket("Invalid session id!\n", communicationSocketOutputStream);
+		if (!SessionOperations.isSessionValid(sessionId)) {
+			ServerThread.sendServerMessageToSocket("Invalid session id!\n", communicationSocketOutputStream);
 			return false;
 		}
 		
-		Session currentSession = validator.getSessionFromId(sessionId);
-		// TODO: no chains
-		User userToUpdate = CommandsExecutor.getSessions().get(currentSession);
-		if (validator.isSessionExpiredForUser(userToUpdate)) {
-			CommandsExecutor.sendServerMessageToSocket("Your session has expired! Please log in again\n", communicationSocketOutputStream);
-			CommandsExecutor.removeExpiredSessionForUser(userToUpdate.getUsername(), sessionId);
+		User userToUpdate = SessionOperations.getUserBySessionId(sessionId);
+		if (SessionOperations.isSessionExpiredForUser(userToUpdate)) {
+			ServerThread.sendServerMessageToSocket("Your session has expired! Please log in again\n", communicationSocketOutputStream);
+			SessionOperations.removeExpiredSessionWithSessionId(sessionId);
 			return false;
 		}
 		
-		String userName = userToUpdate.getUsername();
-		CommandsExecutor.removeExpiredSessionForUser(userName, null);
-		// TODO: chains!
-		CommandsExecutor.getUsers().remove(userName);
-		CommandsExecutor.getLoggedIn().remove(userName);
+		SessionOperations.removeSessionForUser(userToUpdate);
+		UserOperations.removeUser(userToUpdate);
 		
 		// TODO: remove those!
 		int sizeLine = commandOptions.length;
@@ -39,27 +34,26 @@ public class UpdateUserCommand implements Command {
 		final int sevenWordsLength = 7;
 		final int nineWordsLength = 9;
 		if (sizeLine >= oneOptionLenght) {
-			CommandsExecutor.setNewUsersDetailsAccordingOption(commandOptions, threeWordsLength, userToUpdate);
+			UserOperations.setNewUsersDetailsAccordingOption(commandOptions, threeWordsLength, userToUpdate);
 		}
 		if (sizeLine >= twoOptionLenght) {
-			CommandsExecutor.setNewUsersDetailsAccordingOption(commandOptions, fiveWordsLength, userToUpdate);
+			UserOperations.setNewUsersDetailsAccordingOption(commandOptions, fiveWordsLength, userToUpdate);
 		}
 		if (sizeLine >= threeOptionLenght) {
-			CommandsExecutor.setNewUsersDetailsAccordingOption(commandOptions, sevenWordsLength, userToUpdate);
+			UserOperations.setNewUsersDetailsAccordingOption(commandOptions, sevenWordsLength, userToUpdate);
 		}
 		if (sizeLine == fourOptionLenght) {
-			CommandsExecutor.setNewUsersDetailsAccordingOption(commandOptions, nineWordsLength, userToUpdate);
+			UserOperations.setNewUsersDetailsAccordingOption(commandOptions, nineWordsLength, userToUpdate);
 		}
-		CommandsExecutor.getUsers().put(userToUpdate.getUsername(), userToUpdate);
-		CommandsExecutor.getLoggedIn().put(userToUpdate.getUsername(), userToUpdate);
+		UserOperations.addUser(userToUpdate);
+		UserOperations.logInUser(userToUpdate);
 		
 		Session newSession = new Session();
-		// TODO: chains!
-		CommandsExecutor.getSessions().put(newSession, userToUpdate);
-		CommandsExecutor.updateUsersDetails();
+		SessionOperations.addSessionForUser(newSession, userToUpdate);
+		UserOperations.updateUsersDetails();
 		
 		String confirmationMessage = "User %s has successfully updated their information\n Session with id %s and ttl %s has been created\n";
-		CommandsExecutor.sendServerMessageToSocket(String.format(confirmationMessage, userToUpdate.getUsername(), newSession.getID(), newSession.getTimeToLive()), communicationSocketOutputStream);
+		ServerThread.sendServerMessageToSocket(String.format(confirmationMessage, userToUpdate.getUsername(), newSession.getID(), newSession.getTimeToLive()), communicationSocketOutputStream);
 	
 		return true;
 	}

@@ -2,8 +2,6 @@ package com.fmi.java.cp;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 
 public class Validator {
@@ -47,53 +45,5 @@ public class Validator {
 	}
 	public boolean validateDeleteUser(String[] words) {
 		return words[1].equals("–username");
-	}
-	
-	public boolean confirmExistenceOfUserWithUsername(String userName) {
-		
-		Map<String, User> allCurrentUsers = CommandsExecutor.getUsers();
-		return allCurrentUsers.containsKey(userName);
-	}
-	
-	public boolean validatePasswordForUser(User user, String password) {
-		
-		return Password.authenticate(password, user.getPassword());
-	}
-	
-	public boolean validateSession(String sessionId) {
-		
-		Set<Session> allCurrentSessions = CommandsExecutor.getSessionsKeySet();
-		for (Session session : allCurrentSessions) {
-			if (session.getID().equals(sessionId)) {
-				return true;
-			}
-		}
-		return false;
-	}
-	
-	public Session getSessionFromId(String sessionId) {
-		
-		Set<Session> allCurrentSessions = CommandsExecutor.getSessionsKeySet();
-		for (Session session : allCurrentSessions) {
-			if (session.getID().equals(sessionId)) {
-				return session;
-			}
-		}
-		return null;
-	}
-	
-	public boolean isUserAlreadyLoggedIn(String userName) {
-		return (CommandsExecutor.getLoggedIn().containsKey(userName));
-	}
-	
-	public boolean isSessionExpiredForUser(User user) {
-		
-		Set<Session> allCurrentSessions = CommandsExecutor.getSessionsKeySet();
-		for (Session session : allCurrentSessions) {
-			if (CommandsExecutor.getSessions().get(session).equals(user)) {
-				return session.hasExpired();
-			}
-		}
-		return true;
 	}
 }
