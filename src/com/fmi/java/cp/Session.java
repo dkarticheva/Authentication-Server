@@ -6,17 +6,17 @@ import java.util.UUID;
 public class Session {
 	
 	private String id;
-	private long createdAt;
+	private long creationTime;
 	private final long ttl = 90_000;
 	
 	public Session() {
-		createdAt = System.currentTimeMillis();
+		creationTime = System.currentTimeMillis();
 		id = UUID.randomUUID().toString();
 	}
 	
 	public boolean hasExpired() {
 		long timeNow = System.currentTimeMillis();
-		return (createdAt + ttl) < timeNow;
+		return (creationTime + ttl) < timeNow;
 	}
 	
 	public String getID() {

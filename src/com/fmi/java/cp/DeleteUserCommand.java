@@ -5,27 +5,29 @@ import java.io.OutputStream;
 public class DeleteUserCommand implements Command{
 
 	@Override
-	public boolean execute(String[] words, OutputStream outputStream) {
-		String userName = words[2];
-		if (!validator.validateUser(userName)) {
-			CommandsExecutor.sendToSocket("Wrong username or password!\n", outputStream);
+	public boolean execute(String[] commandOptions, OutputStream communicationSocketOutputStream) {
+		
+		String userName = commandOptions[2];
+		if (!validator.confirmExistenceOfUserWithUsername(userName)) {
+			CommandsExecutor.sendServerMessageToSocket("Wrong username or password!\n", communicationSocketOutputStream);
 			return false;
 		}
-		User u = CommandsExecutor.getUsers().get(userName);
-		if (validator.isSessionExpired(u)) {
-			CommandsExecutor.sendToSocket("Your session has expired! Please log in again\n", outputStream);
-			CommandsExecutor.removeFromSessions(userName, null);
+		
+		User userToDelete = CommandsExecutor.getUsers().get(userName);
+		if (validator.isSessionExpiredForUser(userToDelete)) {
+			CommandsExecutor.sendServerMessageToSocket("Your session has expired! Please log in again\n", communicationSocketOutputStream);
+			CommandsExecutor.removeExpiredSessionForUser(userName, null);
 			return false;
 		}
-		CommandsExecutor.removeFromSessions(userName, null);
+		
+		// TODO: remove the chains 
+		CommandsExecutor.removeExpiredSessionForUser(userName, null);
 		CommandsExecutor.getUsers().remove(userName);
 		CommandsExecutor.getLoggedIn().remove(userName);
-		CommandsExecutor.updateFile();
+		CommandsExecutor.updateUsersDetails();
 		
-		StringBuilder msg = new StringBuilder("User ");
-		msg.append(userName);
-		msg.append(" has been deleted\n");
-		CommandsExecutor.sendToSocket(msg.toString(), outputStream);
+		String confirmationMessage = "User %s has been deleted\n";
+		CommandsExecutor.sendServerMessageToSocket(String.format(confirmationMessage, userName), communicationSocketOutputStream);
 		return true;
 	}
 

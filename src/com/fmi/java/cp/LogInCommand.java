@@ -5,37 +5,37 @@ import java.io.OutputStream;
 public class LogInCommand implements Command{
 
 	@Override
-	public boolean execute(String[] words, OutputStream outputStream) {
-		String userName = words[USERNAME_INDEX];
-		String password = words[PASSWORD_INDEX];
-		if (!validator.validateUser(userName)) {
-			CommandsExecutor.sendToSocket("Wrong username or password!\n", outputStream);
+	public boolean execute(String[] commandOptions, OutputStream communicationSocketOutputStream) {
+		
+		String userName = commandOptions[USERNAME_INDEX];
+		String password = commandOptions[PASSWORD_INDEX];
+		
+		if (!validator.confirmExistenceOfUserWithUsername(userName)) {
+			CommandsExecutor.sendServerMessageToSocket("Wrong username or password!\n", communicationSocketOutputStream);
 			return false;
 		}
-		User u = CommandsExecutor.getUsers().get(userName);
-		if (!validator.validatePassword(u, password)) {
-			CommandsExecutor.sendToSocket("Wrong username or password!\n", outputStream);
+		
+		User userToLogIn = CommandsExecutor.getUsers().get(userName);
+		if (!validator.validatePasswordForUser(userToLogIn, password)) {
+			CommandsExecutor.sendServerMessageToSocket("Wrong username or password!\n", communicationSocketOutputStream);
 			return false;
 		}
-		CommandsExecutor.getLoggedIn().put(userName, u);
+		
+		// TODO: don't do it like that!
+		CommandsExecutor.getLoggedIn().put(userName, userToLogIn);
 		
 		// in case of a second log in in a row
-		if (validator.alreadyLoggedIn(userName)) {
-			CommandsExecutor.removeFromSessions(userName, null);
+		if (validator.isUserAlreadyLoggedIn(userName)) {
+			CommandsExecutor.removeExpiredSessionForUser(userName, null);
 		}
 		
-		Session s = new Session();
-		CommandsExecutor.getSessions().put(s, u);
+		Session newSession = new Session();
 		
-		StringBuilder msg = new StringBuilder("User ");
-		msg.append(userName);
-		msg.append(" has been successfully logged\n");
-		msg.append("Session with id ");
-		msg.append(s.getID());
-		msg.append(" and ttl ");
-		msg.append(s.getTimeToLive());
-		msg.append(" has been created\n");
-		CommandsExecutor.sendToSocket(msg.toString(), outputStream);
+		// TODO: don't do it like that!
+		CommandsExecutor.getSessions().put(newSession, userToLogIn);
+		
+		String confirmationMessage = "User %s has been successfully logged\n Session with id %s and ttl %s has been created\n";
+		CommandsExecutor.sendServerMessageToSocket(String.format(confirmationMessage, userName, newSession.getID(), newSession.getTimeToLive()), communicationSocketOutputStream);
 		return true;
 	}
 

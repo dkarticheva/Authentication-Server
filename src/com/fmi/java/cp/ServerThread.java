@@ -23,6 +23,7 @@ public class ServerThread extends Thread {
 			System.out.println("Issue while accessing the socket streams!");
 		}
 	}
+	
 	private String receiveRequest() {
 		String input = null;
 		try {
@@ -35,6 +36,7 @@ public class ServerThread extends Thread {
 		}
 		return input;
 	}
+	
 	public void run() {
 		while (true) {
 			String input = receiveRequest();
@@ -43,7 +45,7 @@ public class ServerThread extends Thread {
 			}
 			String dataBaseFileName = "src/usersInfo.txt";
 			InputReader reader = new InputReader(outputStream, dataBaseFileName);
-			reader.readInput(input);
+			reader.readClientSentCommand(input);
 		}
 	}
 }

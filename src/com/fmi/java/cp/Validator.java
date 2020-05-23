@@ -1,11 +1,17 @@
 package com.fmi.java.cp;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 
 public class Validator {
 	
+	private static List<String> validCommandNames = Arrays.asList("register", "login", "reset-password", "update-user", 
+			"logout", "delete-user");
+	
+	// TODO: remove those!
 	final static int USERNAME_INDEX = 1;
 	final static int PASSWORD_INDEX = 3;
 	final static int OLDPASSWORD_INDEX = 3;
@@ -15,9 +21,8 @@ public class Validator {
 	final static int EMAIL_INDEX = 9;
 	
 	// validation of the commands and their options
-	public boolean isValidCommand(String cmd) {
-		return cmd.equals("register") || cmd.equals("login") || cmd.equals("reset-password") 
-				|| cmd.equals("update-user") || cmd.equals("logout") || cmd.equals("delete-user");
+	public boolean isValidCommand(String commandName) {
+		return validCommandNames.contains(commandName);
 	}
 	public boolean validateRegisterCommand(String[] words) {
 		return words[USERNAME_INDEX].equals("--username") && words[PASSWORD_INDEX].equals("--password") 
@@ -44,42 +49,49 @@ public class Validator {
 		return words[1].equals("–username");
 	}
 	
-	// validation of user properties
-	public boolean validateUser(String userName) {
-		Map<String, User> usrs = CommandsExecutor.getUsers();
-		return usrs.containsKey(userName);
+	public boolean confirmExistenceOfUserWithUsername(String userName) {
+		
+		Map<String, User> allCurrentUsers = CommandsExecutor.getUsers();
+		return allCurrentUsers.containsKey(userName);
 	}
-	public boolean validatePassword(User user, String password) {
+	
+	public boolean validatePasswordForUser(User user, String password) {
+		
 		return Password.authenticate(password, user.getPassword());
 	}
-	public boolean validateSession(String sID) {
-		Map<Session, User> seshs = CommandsExecutor.getSessions();
-		Set<Session> sesh = seshs.keySet();
-		for (Session s : sesh) {
-			if (s.getID().equals(sID)) {
+	
+	public boolean validateSession(String sessionId) {
+		
+		Set<Session> allCurrentSessions = CommandsExecutor.getSessionsKeySet();
+		for (Session session : allCurrentSessions) {
+			if (session.getID().equals(sessionId)) {
 				return true;
 			}
 		}
 		return false;
 	}
-	public Session findSessionFromID(String sID) {
-		Map<Session, User> seshs = CommandsExecutor.getSessions();
-		Set<Session> sesh = seshs.keySet();
-		for (Session s : sesh) {
-			if (s.getID().equals(sID)) {
-				return s;
+	
+	public Session getSessionFromId(String sessionId) {
+		
+		Set<Session> allCurrentSessions = CommandsExecutor.getSessionsKeySet();
+		for (Session session : allCurrentSessions) {
+			if (session.getID().equals(sessionId)) {
+				return session;
 			}
 		}
 		return null;
 	}
-	public boolean alreadyLoggedIn(String userName) {
+	
+	public boolean isUserAlreadyLoggedIn(String userName) {
 		return (CommandsExecutor.getLoggedIn().containsKey(userName));
 	}
-	public boolean isSessionExpired(User user) {
-		Set<Session> ss = CommandsExecutor.getSessions().keySet();
-		for (Session s : ss) {
-			if (CommandsExecutor.getSessions().get(s).equals(user)) {
-				return s.hasExpired();
+	
+	public boolean isSessionExpiredForUser(User user) {
+		
+		Set<Session> allCurrentSessions = CommandsExecutor.getSessionsKeySet();
+		for (Session session : allCurrentSessions) {
+			if (CommandsExecutor.getSessions().get(session).equals(user)) {
+				return session.hasExpired();
 			}
 		}
 		return true;

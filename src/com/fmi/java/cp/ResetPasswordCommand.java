@@ -5,32 +5,38 @@ import java.io.OutputStream;
 public class ResetPasswordCommand implements Command{
 
 	@Override
-	public boolean execute(String[] words, OutputStream outputStream) {
-		String userName = words[2];
-		String oldPassword = words[OLDPASSWORD_INDEX];
-		String newPassword = words[NEWPASSWORD_INDEX];
-		if (!validator.validateUser(userName)) {
-			CommandsExecutor.sendToSocket("Wrong username or password!\n", outputStream);
-			return false;
-		}
-		User u = CommandsExecutor.getUsers().get(userName);
-		if (!validator.validatePassword(u, oldPassword)) {
-			CommandsExecutor.sendToSocket("Wrong username or password!\n", outputStream);
-			return false;
-		}
-		if (validator.isSessionExpired(u)) {
-			CommandsExecutor.sendToSocket("Your session has expired! Please log in again\n", outputStream);
-			CommandsExecutor.removeFromSessions(userName, null);
-			return false;
-		}
-		u.setPassword(Password.hash(newPassword));
-		CommandsExecutor.getUsers().put(userName, u);
-		CommandsExecutor.updateFile();
+	public boolean execute(String[] commandOptions, OutputStream communicationSocketOutputStream) {
 		
-		StringBuilder msg = new StringBuilder("Password for user ");
-		msg.append(userName);
-		msg.append(" has been successfully modified\n");
-		CommandsExecutor.sendToSocket(msg.toString(), outputStream);
+		// Fix those in every command class!
+		String userName = commandOptions[2];
+		String oldPassword = commandOptions[OLDPASSWORD_INDEX];
+		String newPassword = commandOptions[NEWPASSWORD_INDEX];
+		
+		if (!validator.confirmExistenceOfUserWithUsername(userName)) {
+			CommandsExecutor.sendServerMessageToSocket("Wrong username or password!\n", communicationSocketOutputStream);
+			return false;
+		}
+		
+		// TODO: no chains pls
+		User userToResetPassword = CommandsExecutor.getUsers().get(userName);
+		if (!validator.validatePasswordForUser(userToResetPassword, oldPassword)) {
+			CommandsExecutor.sendServerMessageToSocket("Wrong username or password!\n", communicationSocketOutputStream);
+			return false;
+		}
+		
+		if (validator.isSessionExpiredForUser(userToResetPassword)) {
+			CommandsExecutor.sendServerMessageToSocket("Your session has expired! Please log in again\n", communicationSocketOutputStream);
+			CommandsExecutor.removeExpiredSessionForUser(userName, null);
+			return false;
+		}
+		
+		userToResetPassword.setPassword(Password.hash(newPassword));
+		// TODO: no chains pls
+		CommandsExecutor.getUsers().put(userName, userToResetPassword);
+		CommandsExecutor.updateUsersDetails();
+		
+		String confirmationMessage = "Password for user %s has been successfully modified\n";
+		CommandsExecutor.sendServerMessageToSocket(String.format(confirmationMessage, userName), communicationSocketOutputStream);
 		return true;
 	}
 

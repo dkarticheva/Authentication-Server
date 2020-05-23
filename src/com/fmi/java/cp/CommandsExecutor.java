@@ -13,121 +13,133 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class CommandsExecutor {
 	
-	final static int USERNAME_INDEX = 2;
-	final static int PASSWORD_INDEX = 4;
-	final static int NEWPASSWORD_INDEX = 6;
-	final static int OLDPASSWORD_INDEX = 4;
-	final static int FIRSTNAME_INDEX = 6;
-	final static int LASTNAME_INDEX = 8;
-	final static int EMAIL_INDEX = 10;
+	private static Map<String, User> allUsers;
+	private static Map<String, User> loggedInUsers;
+	private static Map<Session, User> activeSessionsOfUsers;
 	
-	private static Map<String, User> users;
-	private static Map<String, User> loggedIn;
-	private static Map<Session, User> sessions;
-	
-	static File usersInfo;
+	private static File usersDetails;
 	
 	public CommandsExecutor(File usersInfoFile) {
-		users = new ConcurrentHashMap<String, User>();
-		loggedIn = new ConcurrentHashMap<String, User>();
-		sessions = new ConcurrentHashMap<Session, User>();
-		usersInfo = usersInfoFile;
+		allUsers = new ConcurrentHashMap<String, User>();
+		loggedInUsers = new ConcurrentHashMap<String, User>();
+		activeSessionsOfUsers = new ConcurrentHashMap<Session, User>();
+		usersDetails = usersInfoFile;
 	}
 	
-	// getters
 	public static Map<String, User> getUsers() {
-		return users;
+		return allUsers;
 	}
+	
 	public static Map<Session, User> getSessions() {
-		return sessions;
+		return activeSessionsOfUsers;
 	}
+	
+	public static Set<Session> getSessionsKeySet() {
+		return activeSessionsOfUsers.keySet();
+	}
+	
 	public static Map<String, User> getLoggedIn() {
-		return loggedIn;
+		return loggedInUsers;
 	}
-	static void removeFromSessions(String userName, String sesId) {
-		Set<Session> ss = sessions.keySet();
-		if (sesId != null) {
-			for (Session s : ss) {
-				s.getID().equals(sesId);
-				sessions.remove(s);
+	
+	public static void removeExpiredSessionForUser(String userName, String sessionId) {
+		
+		Set<Session> activeSessions = activeSessionsOfUsers.keySet();
+		
+		if (sessionId != null) {
+			for (Session session : activeSessions) {
+				session.getID().equals(sessionId);
+				activeSessionsOfUsers.remove(session);
 			}
 			return;
 		}
-		User u = loggedIn.get(userName);
-		for (Session s : ss) {
-			if (sessions.get(s).equals(u)) {
-				sessions.remove(s);
+		
+		// TODO: what is the meaning of this? fix it
+		User user = loggedInUsers.get(userName);
+		for (Session session : activeSessions) {
+			if (activeSessionsOfUsers.get(session).equals(user)) {
+				activeSessionsOfUsers.remove(session);
 			}
 		}
 	}
-	static void updateFile() {
-		Collection<User> usrs = users.values();
+	public static void updateUsersDetails() {
+		
+		Collection<User> users = allUsers.values();
+		
+		// TODO: use try with resources
 		try {
-			BufferedWriter bw = new BufferedWriter(new FileWriter(usersInfo));
-			for (User u : usrs) {
-				bw.write(u.getUsername());
-				bw.write(" ");
-				bw.write(u.getPassword());
-				bw.write(" ");
-				bw.write(u.getFirstName());
-				bw.write(" ");
-				bw.write(u.getLastName());
-				bw.write(" ");
-				bw.write(u.getEmail());
-				bw.newLine();
+			BufferedWriter userDetailsWriter = new BufferedWriter(new FileWriter(usersDetails));
+			for (User user : users) {
+				userDetailsWriter.write(user.getUsername());
+				userDetailsWriter.write(" ");
+				userDetailsWriter.write(user.getPassword());
+				userDetailsWriter.write(" ");
+				userDetailsWriter.write(user.getFirstName());
+				userDetailsWriter.write(" ");
+				userDetailsWriter.write(user.getLastName());
+				userDetailsWriter.write(" ");
+				userDetailsWriter.write(user.getEmail());
+				userDetailsWriter.newLine();
 			}
-			bw.close();
+			userDetailsWriter.close();
 			
 		} catch (IOException e) {
 			System.out.println("Issue while opening the database");
 		}
 	}
-	static void findOutOption(String[] words, int index, User u) {
-		String curOpt = words[index];
-		String nextWord = words[index + 1];
-		switch (curOpt) {
-			case "-–new-username"   : u.setUsername(nextWord); 
+	
+	// TODO : don't pass the whole line - just name and value of the current option
+	static void setNewUsersDetailsAccordingOption(String[] commandOptions, int optionNameIndex, User newUser) {
+		
+		String optionName = commandOptions[optionNameIndex];
+		String optionValue = commandOptions[optionNameIndex + 1];
+		
+		switch (optionName) {
+			case "-–new-username"   : newUser.setUsername(optionValue); 
 									  break;
-			case "--new-first-name" : u.setFirstName(nextWord); 
+			case "--new-first-name" : newUser.setFirstName(optionValue); 
 									  break;
-			case "--new-last-name"  : u.setLastName(nextWord); 
+			case "--new-last-name"  : newUser.setLastName(optionValue); 
 									  break;
-			default                 : u.setEmail(nextWord);
+			default                 : newUser.setEmail(optionValue);
 		}
 	}
-	public static void sendToSocket(String message, OutputStream outputStream) {
-		int sizeOfMesg = message.length();
-		PrintWriter writer = new PrintWriter(outputStream, true);
-		writer.println(sizeOfMesg);
-		writer.print(message);
-		writer.flush();
+	
+	public static void sendServerMessageToSocket(String message, OutputStream communicationSocketOutputStream) {
+		
+		PrintWriter socketMessageWriter = new PrintWriter(communicationSocketOutputStream, true);
+		int messageSize = message.length();
+		
+		socketMessageWriter.println(messageSize);
+		socketMessageWriter.print(message);
+		socketMessageWriter.flush();
 	}
 	
-	public boolean register(String[] words, OutputStream outputStream) {
-		return new RegisterCommand().execute(words, outputStream);
+	public boolean register(String[] commandOptions, OutputStream communicationSocketOutputStream) {
+		return new RegisterCommand().execute(commandOptions, communicationSocketOutputStream);
 	}
 	
-	public boolean logIn(String[] words, OutputStream outputStream) {
-		return new LogInCommand().execute(words, outputStream);
+	public boolean logIn(String[] commandOptions, OutputStream communicationSocketOutputStream) {
+		return new LogInCommand().execute(commandOptions, communicationSocketOutputStream);
 	}
 	
-	public boolean resetPassword(String[] words, OutputStream outputStream) {
-		return new ResetPasswordCommand().execute(words, outputStream);
+	public boolean resetPassword(String[] commandOptions, OutputStream communicationSocketOutputStream) {
+		return new ResetPasswordCommand().execute(commandOptions, communicationSocketOutputStream);
 	}
 	
-	public boolean deleteUser(String[] words, OutputStream outputStream) {
-		return new DeleteUserCommand().execute(words, outputStream);
+	public boolean deleteUser(String[] commandOptions, OutputStream communicationSocketOutputStream) {
+		return new DeleteUserCommand().execute(commandOptions, communicationSocketOutputStream);
 	}
 	
-	public boolean logInSesId(String[] words, OutputStream outputStream) {
-		return new LogInWithSessionCommand().execute(words, outputStream);
+	public boolean logInSesId(String[] commandOptions, OutputStream communicationSocketOutputStream) {
+		return new LogInWithSessionCommand().execute(commandOptions, communicationSocketOutputStream);
 	}
 	
-	public boolean logOut(String[] words, OutputStream outputStream) {
-		return new LogOutCommand().execute(words, outputStream);
+	public boolean logOut(String[] commandOptions, OutputStream communicationSocketOutputStream) {
+		return new LogOutCommand().execute(commandOptions, communicationSocketOutputStream);
 	} 
 	
-	public boolean updateUser(String[] words, OutputStream outputStream) {
-		return new UpdateUserCommand().execute(words, outputStream);
+	public boolean updateUser(String[] commandOptions, OutputStream communicationSocketOutputStream) {
+		return new UpdateUserCommand().execute(commandOptions, communicationSocketOutputStream);
 	}
 }

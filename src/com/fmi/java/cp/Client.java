@@ -11,85 +11,105 @@ import java.util.Scanner;
 
 public class Client {
 	
-	private Socket socket;
-	private BufferedReader reader;
+	private Socket communicationSocket;
+	private BufferedReader serverSentDataReader;
+	
+	// TODO: fix this!
 	private Validator validator;
 	
-	final static int DEFAULT_PORT = 4444;
+	final static int DEFAULT_COMMUNICATION_PORT = 4444;
 	
-	private boolean checkInput(String[] words) {
-		Validator validator = new Validator();
-		switch (words[0]) {
-			case "register" : return validator.validateRegisterCommand(words);
+	private boolean validateOptionsAccordingCommandName(String[] commandLine) {
 		
-			case "reset-password" : return validator.validateResetPassword(words);
+		// TODO: omg what is that - fix it!
+		Validator validator = new Validator();
+		
+		String commandName = commandLine[0];
+		switch (commandName) {
+			case "register" : return validator.validateRegisterCommand(commandLine);
+		
+			case "reset-password" : return validator.validateResetPassword(commandLine);
 			
-			case "update-user" : return validator.validateUpdateUser(words);
+			case "update-user" : return validator.validateUpdateUser(commandLine);
 			
-			case "logout" : return validator.validateLogOut(words);
+			case "logout" : return validator.validateLogOut(commandLine);
 			
-			case "delete-user" : return validator.validateDeleteUser(words);
+			case "delete-user" : return validator.validateDeleteUser(commandLine);
 			
 		}
-		if (words[0].equals("login")) {
-			if (words[1].equals("-–username")) {
-				return validator.validateLogIn(words);
+		if (commandName.equals("login")) {
+			String firstOption = commandLine[1];
+			if (firstOption.equals("-–username")) {
+				return validator.validateLogIn(commandLine);
 			}
 			else {
-				return validator.validateLogInSesh(words);
+				return validator.validateLogInSesh(commandLine);
 			}
 		}
 		return false;
 	}
 	
-	public Client(InetAddress adr, int port) {
+	public Client(InetAddress socketAddress, int socketPort) {
+		
 		try {
-			socket = new Socket(adr, port);
-			reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+			communicationSocket = new Socket(socketAddress, socketPort);
+			serverSentDataReader = new BufferedReader(new InputStreamReader(communicationSocket.getInputStream()));
 			System.out.println("Successfully connected to server");
 			
 			validator = new Validator();
 		} catch (IOException e) {
-			System.out.println("Issue while opening socket on address " + adr + " and on port" + port);
+			System.out.println("Issue while opening socket on address " + socketAddress + " and on port" + socketPort);
 		}
 	}
-	private void sendInput(String line) {
+	
+	private void sendCommandToServer(String command) {
+		
 		try {
-			PrintWriter writer = new PrintWriter(socket.getOutputStream(), true);
-			int sizeOfMsg = line.length();
-			writer.println(sizeOfMsg);
-			writer.println(line);
-			writer.flush();
+			PrintWriter clientDataWriter = new PrintWriter(communicationSocket.getOutputStream(), true);
+			
+			int commandSize = command.length();
+			
+			clientDataWriter.println(commandSize);
+			clientDataWriter.println(command);
+			clientDataWriter.flush();
+			
 		} catch (IOException e) {
 			System.out.println("Issue while sending the input data to the server!");
 		}
 		
 	}
-	public void retrieveInput() {
+	public void readUserCommandFromConsole() {
+		
 		Scanner consoleReader = new Scanner(System.in);
-		String inputLine;
-		while ((inputLine = consoleReader.nextLine()) != null) {
-			String[] inputWords = inputLine.split(" ");
-			if (!validator.isValidCommand(inputWords[0])) {
+		String commandLine;
+		
+		while ((commandLine = consoleReader.nextLine()) != null) {
+			
+			String[] commandNameAndOptions = commandLine.split(" ");
+			String commandName = commandNameAndOptions[0];
+			
+			if (!validator.isValidCommand(commandName)) {
 				System.out.println("Invalid command!");
 			}
-			else if (!checkInput(inputWords)) {
+			else if (!validateOptionsAccordingCommandName(commandNameAndOptions)) {
 				System.out.println("Incorrect command options!");
 			}
 			else {
-				sendInput(inputLine);
-				receiveOutput();
+				sendCommandToServer(commandLine);
+				readServerReply();
 			}
 		}
 		consoleReader.close();
 	}
-	public void receiveOutput() {
+	public void readServerReply() {
+		
 		try {
-			String input;
-			int sizeOfMsg = Integer.parseInt(reader.readLine());
-			while (sizeOfMsg != 0 && (input = reader.readLine()) != null) {
-				System.out.println(input);
-				sizeOfMsg -= input.length() + 1;
+			String serverReply;
+			int serverReplySize = Integer.parseInt(serverSentDataReader.readLine());
+			
+			while (serverReplySize != 0 && (serverReply = serverSentDataReader.readLine()) != null) {
+				System.out.println(serverReply);
+				serverReplySize -= serverReply.length() + 1;
 			}
 		} catch (IOException e) {
 			System.out.println("Issue while receiving the output data fro the server!");
@@ -97,10 +117,13 @@ public class Client {
 	}
 	
 	public static void main(String[] args) {
+		
 		try {
-			InetAddress adr = InetAddress.getByName("localhost");
-			Client c = new Client(adr, DEFAULT_PORT);
-			c.retrieveInput();
+			
+			InetAddress  socketAddress = InetAddress.getByName("localhost");
+			Client client = new Client(socketAddress, DEFAULT_COMMUNICATION_PORT);
+			client.readUserCommandFromConsole();
+			
 		} catch (UnknownHostException e) {
 			System.out.println("The entered host is unknown");
 		}

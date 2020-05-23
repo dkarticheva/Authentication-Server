@@ -4,6 +4,7 @@ import java.io.OutputStream;
 
 public interface Command {
 	
+	// TODO: just no
 	final static int USERNAME_INDEX = 2;
 	final static int PASSWORD_INDEX = 4;
 	final static int NEWPASSWORD_INDEX = 6;
@@ -14,5 +15,5 @@ public interface Command {
 	
 	Validator validator = new Validator();
 	
-	public abstract boolean execute(String[] words, OutputStream outputStream);
+	public abstract boolean execute(String[] commandOptions, OutputStream communicationSocketOutputStream);
 }

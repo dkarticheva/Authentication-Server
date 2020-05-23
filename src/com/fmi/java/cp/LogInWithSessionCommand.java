@@ -5,21 +5,21 @@ import java.io.OutputStream;
 public class LogInWithSessionCommand implements Command{
 
 	@Override
-	public boolean execute(String[] words, OutputStream outputStream) {
-		String curId = words[2];
-		if (!validator.validateSession(curId)) {
-			CommandsExecutor.sendToSocket("Invalid session id!\n", outputStream);
+	public boolean execute(String[] commandOptions, OutputStream communicationSocketOutputStream) {
+		
+		String sessionId = commandOptions[2];
+		if (!validator.validateSession(sessionId)) {
+			CommandsExecutor.sendServerMessageToSocket("Invalid session id!\n", communicationSocketOutputStream);
 			return false;
 		}
 
-		Session s = validator.findSessionFromID(curId);
-		User u = CommandsExecutor.getSessions().get(s);
-		CommandsExecutor.getLoggedIn().put(u.getUsername(), u);
+		Session session = validator.getSessionFromId(sessionId);
+		User userToLogIn = CommandsExecutor.getSessions().get(session);
+		// TODO : remove the chain!
+		CommandsExecutor.getLoggedIn().put(userToLogIn.getUsername(), userToLogIn);
 		
-		StringBuilder msg = new StringBuilder("User ");
-		msg.append(u.getUsername());
-		msg.append(" has loged in successfully\n");
-		CommandsExecutor.sendToSocket(msg.toString(), outputStream);
+		String confirmationMessage = "User %s has loged in successfully\n";
+		CommandsExecutor.sendServerMessageToSocket(String.format(confirmationMessage, userToLogIn.getUsername()), communicationSocketOutputStream);
 		return true;
 	}
 

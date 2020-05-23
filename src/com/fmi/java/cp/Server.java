@@ -6,13 +6,13 @@ import java.net.Socket;
 
 public class Server {
 	
-	final static int DEFAULT_PORT = 4444;
+	final static int DEFAULT_COMMUNICATION_PORT = 4444;
 		
 	public static void main(String[] args) {
 		ServerSocket serverSocket = null;
 		try {
 			
-			serverSocket = new ServerSocket(DEFAULT_PORT);
+			serverSocket = new ServerSocket(DEFAULT_COMMUNICATION_PORT);
 			System.out.println("Server is running");
 			
 			while (true) {
