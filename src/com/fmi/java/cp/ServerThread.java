@@ -38,15 +38,41 @@ public class ServerThread extends Thread {
 		return input;
 	}
 	
-	
-	public static void sendServerMessageToSocket(String message, OutputStream communicationSocketOutputStream) {
+	private void sendServerMessageToSocket(String message) {
 		
-		PrintWriter socketMessageWriter = new PrintWriter(communicationSocketOutputStream, true);
+		PrintWriter socketMessageWriter = new PrintWriter(outputStream, true);
 		int messageSize = message.length();
 		
 		socketMessageWriter.println(messageSize);
 		socketMessageWriter.print(message);
 		socketMessageWriter.flush();
+	}
+	
+	private CommandResult executeParsedClientCommand(String command) {
+		String[] commandOptions = command.split(" ");
+		String commandName = commandOptions[0];
+		String firstOption = commandOptions[1];
+		
+		switch (commandName) {
+			case "register" : return CommandsExecutor.register(commandOptions);
+			
+			case "reset-password" : return CommandsExecutor.resetPassword(commandOptions);
+			
+			case "update-user" : return CommandsExecutor.updateUser(commandOptions); 
+			
+			case "logout" : return CommandsExecutor.logOut(commandOptions); 
+			
+			case "delete-user" : return CommandsExecutor.deleteUser(commandOptions); 
+		}
+		if (commandName.equals("login")) {
+			if (firstOption.equals("-–username")) {
+				return CommandsExecutor.logIn(commandOptions);
+			}
+			else {
+				return CommandsExecutor.logInSesId(commandOptions);
+			}
+		}
+		return new CommandResult("Invalid command name");
 	}
 
 	public void run() {
@@ -55,9 +81,12 @@ public class ServerThread extends Thread {
 			if (input == null) {
 				break;
 			}
+			
+			// TODO : how to use the file?
 			String dataBaseFileName = "src/usersInfo.txt";
-			InputReader reader = new InputReader(outputStream, dataBaseFileName);
-			reader.readClientSentCommand(input);
+			
+			CommandResult result = executeParsedClientCommand(input);
+			sendServerMessageToSocket(result.getResultMessage());
 		}
 	}
 }

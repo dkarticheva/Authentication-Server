@@ -1,7 +1,5 @@
 package com.fmi.java.cp;
 
-import java.io.OutputStream;
-
 public interface Command {
 	
 	// TODO: just no
@@ -13,5 +11,6 @@ public interface Command {
 	final static int LASTNAME_INDEX = 8;
 	final static int EMAIL_INDEX = 10;
 	
-	public abstract boolean execute(String[] commandOptions, OutputStream communicationSocketOutputStream);
+	public abstract CommandResult execute(String[] commandOptions);
+	
 }

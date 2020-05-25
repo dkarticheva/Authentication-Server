@@ -1,11 +1,9 @@
 package com.fmi.java.cp;
 
-import java.io.OutputStream;
-
 public class RegisterCommand implements Command {
 
 	@Override
-	public boolean execute(String[] commandOptions, OutputStream communicationSocketOutputStream) {
+	public CommandResult execute(String[] commandOptions) {
 		
 		String userName = commandOptions[USERNAME_INDEX];
 		String password = commandOptions[PASSWORD_INDEX];
@@ -13,9 +11,11 @@ public class RegisterCommand implements Command {
 		String lastName = commandOptions[LASTNAME_INDEX];
 		String email = commandOptions[EMAIL_INDEX];
 		
+		CommandResult registerResult = new CommandResult();
+		
 		if (UserOperations.isUsernameAlreadyTaken(userName)) {
-			ServerThread.sendServerMessageToSocket("The username is already taken, please choose a different one\n", communicationSocketOutputStream);
-			return false;
+			registerResult.setResultMessage("The username is already taken, please choose a different one\n");
+			return registerResult;
 		}
 		
 		User userToRegister = new User(userName, password, firstName, lastName, email);
@@ -25,10 +25,8 @@ public class RegisterCommand implements Command {
 		EmailSender.sendEmail(email);
 		
 		String confirmationMessage = "User %s has been successfully registered\n";
-		ServerThread.sendServerMessageToSocket(String.format(confirmationMessage, userName), communicationSocketOutputStream);
-		
-		return true;
-		
+		registerResult.setResultMessage(String.format(confirmationMessage, userName));
+		return registerResult;
 	}
 
 }

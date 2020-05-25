@@ -1,33 +1,33 @@
 package com.fmi.java.cp;
 
-import java.io.OutputStream;
-
 public class LogOutCommand implements Command{
 
 	@Override
-	public boolean execute(String[] commandOptions, OutputStream communicationSocketOutputStream) {
+	public CommandResult execute(String[] commandOptions) {
 		
 		String sessionId = commandOptions[2];
 		
+		CommandResult logOutResult = new CommandResult();
+		
 		if (!SessionOperations.isSessionValid(sessionId)) {
-			ServerThread.sendServerMessageToSocket("Invalid session id!\n", communicationSocketOutputStream);
-			return false;
+			logOutResult.setResultMessage("Invalid session id!\n");
+			return logOutResult;
 		}
 		
 		User userToLogOut = SessionOperations.getUserBySessionId(sessionId);
 		
 		if (SessionOperations.isSessionExpiredForUser(userToLogOut)) {
-			ServerThread.sendServerMessageToSocket("Your session has expired! Please log in again\n", communicationSocketOutputStream);
 			SessionOperations.removeSessionForUser(userToLogOut);
-			return false;
+			logOutResult.setResultMessage("Your session has expired! Please log in again\n");
+			return logOutResult;
 		}
 		
 		SessionOperations.removeExpiredSessionWithSessionId(sessionId);
 		UserOperations.logOutUser(userToLogOut);
 		
 		String confirmationMessage = "User %s has logged out and session with id %s has been terminated\n";
-		ServerThread.sendServerMessageToSocket(String.format(confirmationMessage, userToLogOut.getUsername(), sessionId), communicationSocketOutputStream);
-		return true;
+		logOutResult.setResultMessage(String.format(confirmationMessage, userToLogOut.getUsername(), sessionId));
+		return logOutResult;
 	}
 
 }

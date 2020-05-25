@@ -1,34 +1,33 @@
 package com.fmi.java.cp;
 
-import java.io.OutputStream;
 
 public class CommandsExecutor {
 	
-	public boolean register(String[] commandOptions, OutputStream communicationSocketOutputStream) {
-		return new RegisterCommand().execute(commandOptions, communicationSocketOutputStream);
+	public static CommandResult register(String[] commandOptions) {
+		return new RegisterCommand().execute(commandOptions);
 	}
 	
-	public boolean logIn(String[] commandOptions, OutputStream communicationSocketOutputStream) {
-		return new LogInCommand().execute(commandOptions, communicationSocketOutputStream);
+	public static CommandResult logIn(String[] commandOptions) {
+		return new LogInCommand().execute(commandOptions);
 	}
 	
-	public boolean resetPassword(String[] commandOptions, OutputStream communicationSocketOutputStream) {
-		return new ResetPasswordCommand().execute(commandOptions, communicationSocketOutputStream);
+	public static CommandResult resetPassword(String[] commandOptions) {
+		return new ResetPasswordCommand().execute(commandOptions);
 	}
 	
-	public boolean deleteUser(String[] commandOptions, OutputStream communicationSocketOutputStream) {
-		return new DeleteUserCommand().execute(commandOptions, communicationSocketOutputStream);
+	public static CommandResult deleteUser(String[] commandOptions) {
+		return new DeleteUserCommand().execute(commandOptions);
 	}
 	
-	public boolean logInSesId(String[] commandOptions, OutputStream communicationSocketOutputStream) {
-		return new LogInWithSessionCommand().execute(commandOptions, communicationSocketOutputStream);
+	public static CommandResult logInSesId(String[] commandOptions) {
+		return new LogInWithSessionCommand().execute(commandOptions);
 	}
 	
-	public boolean logOut(String[] commandOptions, OutputStream communicationSocketOutputStream) {
-		return new LogOutCommand().execute(commandOptions, communicationSocketOutputStream);
+	public static CommandResult logOut(String[] commandOptions) {
+		return new LogOutCommand().execute(commandOptions);
 	} 
 	
-	public boolean updateUser(String[] commandOptions, OutputStream communicationSocketOutputStream) {
-		return new UpdateUserCommand().execute(commandOptions, communicationSocketOutputStream);
+	public static CommandResult updateUser(String[] commandOptions) {
+		return new UpdateUserCommand().execute(commandOptions);
 	}
 }

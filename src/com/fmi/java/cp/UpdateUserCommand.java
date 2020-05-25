@@ -1,23 +1,24 @@
 package com.fmi.java.cp;
 
-import java.io.OutputStream;
-
 public class UpdateUserCommand implements Command {
 
 	@Override
-	public boolean execute(String[] commandOptions, OutputStream communicationSocketOutputStream) {
+	public CommandResult execute(String[] commandOptions) {
 		
 		String sessionId = commandOptions[2];
+		
+		CommandResult updateUserResult = new CommandResult();
+		
 		if (!SessionOperations.isSessionValid(sessionId)) {
-			ServerThread.sendServerMessageToSocket("Invalid session id!\n", communicationSocketOutputStream);
-			return false;
+			updateUserResult.setResultMessage("Invalid session id!\n");
+			return updateUserResult;
 		}
 		
 		User userToUpdate = SessionOperations.getUserBySessionId(sessionId);
 		if (SessionOperations.isSessionExpiredForUser(userToUpdate)) {
-			ServerThread.sendServerMessageToSocket("Your session has expired! Please log in again\n", communicationSocketOutputStream);
 			SessionOperations.removeExpiredSessionWithSessionId(sessionId);
-			return false;
+			updateUserResult.setResultMessage("Your session has expired! Please log in again\n");
+			return updateUserResult;
 		}
 		
 		SessionOperations.removeSessionForUser(userToUpdate);
@@ -53,9 +54,8 @@ public class UpdateUserCommand implements Command {
 		UserOperations.updateUsersDetails();
 		
 		String confirmationMessage = "User %s has successfully updated their information\n Session with id %s and ttl %s has been created\n";
-		ServerThread.sendServerMessageToSocket(String.format(confirmationMessage, userToUpdate.getUsername(), newSession.getID(), newSession.getTimeToLive()), communicationSocketOutputStream);
-	
-		return true;
+		updateUserResult.setResultMessage(String.format(confirmationMessage, userToUpdate.getUsername(), newSession.getID(), newSession.getTimeToLive()));
+		return updateUserResult;
 	}
 
 }

@@ -1,23 +1,25 @@
 package com.fmi.java.cp;
 
-import java.io.OutputStream;
-
 public class DeleteUserCommand implements Command{
 
 	@Override
-	public boolean execute(String[] commandOptions, OutputStream communicationSocketOutputStream) {
+	public CommandResult execute(String[] commandOptions) {
 		
 		String userName = commandOptions[2];
+		CommandResult deleteUserResult = new CommandResult();
+		
 		if (!UserOperations.confirmExistenceOfUserWithUsername(userName)) {
-			ServerThread.sendServerMessageToSocket("Wrong username or password!\n", communicationSocketOutputStream);
-			return false;
+			deleteUserResult.setResultMessage("Wrong username or password!\n");
+			return deleteUserResult;
 		}
 		
+		// TODO: check existence then get the user!
 		User userToDelete = UserOperations.getUserByUsername(userName);
+		
 		if (SessionOperations.isSessionExpiredForUser(userToDelete)) {
-			ServerThread.sendServerMessageToSocket("Your session has expired! Please log in again\n", communicationSocketOutputStream);
+			deleteUserResult.setResultMessage("Your session has expired! Please log in again\n");
 			SessionOperations.removeSessionForUser(userToDelete);
-			return false;
+			return deleteUserResult;
 		}
 		
 		SessionOperations.removeSessionForUser(userToDelete);
@@ -25,8 +27,8 @@ public class DeleteUserCommand implements Command{
 		UserOperations.updateUsersDetails();
 		
 		String confirmationMessage = "User %s has been deleted\n";
-		ServerThread.sendServerMessageToSocket(String.format(confirmationMessage, userName), communicationSocketOutputStream);
-		return true;
+		deleteUserResult.setResultMessage(String.format(confirmationMessage, userName));
+		return deleteUserResult;
 	}
-
+	
 }

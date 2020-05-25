@@ -22,6 +22,7 @@ public class Validator {
 	public boolean isValidCommand(String commandName) {
 		return validCommandNames.contains(commandName);
 	}
+	
 	public boolean validateRegisterCommand(String[] words) {
 		return words[USERNAME_INDEX].equals("--username") && words[PASSWORD_INDEX].equals("--password") 
 				&& words[FIRSTNAME_INDEX].equals("--first-name")
