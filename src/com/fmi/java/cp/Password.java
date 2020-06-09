@@ -5,6 +5,16 @@ import java.security.NoSuchAlgorithmException;
 
 public class Password {
 	
+	public static String hashPassword(String plainTextPassword) {
+		return hash(plainTextPassword);
+	}
+	
+	public static boolean authenticate(String plainTextPassword, String storedHashedPassword) {
+		
+		String hashedPassword = hash(plainTextPassword);
+		return hashedPassword.equals(storedHashedPassword);
+	}
+	
 	private static String hash(String plainTextPassword) {
 		
 		// TODO: this null!
@@ -26,14 +36,4 @@ public class Password {
         }
         return hashedPassword;
     }
-	
-	public static String hashPassword(String plainTextPassword) {
-		return hash(plainTextPassword);
-	}
-	
-	public static boolean authenticate(String plainTextPassword, String storedHashedPassword) {
-		
-		String hashedPassword = hash(plainTextPassword);
-		return hashedPassword.equals(storedHashedPassword);
-	}
 }

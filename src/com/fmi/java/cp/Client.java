@@ -11,10 +11,10 @@ import java.util.Scanner;
 
 public class Client {
 	
+	private final static int DEFAULT_COMMUNICATION_PORT = 4444;
+	
 	private Socket communicationSocket;
 	private BufferedReader serverSentDataReader;
-	
-	final static int DEFAULT_COMMUNICATION_PORT = 4444;
 	
 	public Client(InetAddress socketAddress, int socketPort) {
 		
@@ -26,6 +26,22 @@ public class Client {
 		} catch (IOException e) {
 			System.out.println("Issue while opening socket on address " + socketAddress + " and on port" + socketPort);
 		}
+	}
+	
+	
+	public void readUserCommandFromConsole() {
+		
+		Scanner consoleReader = new Scanner(System.in);
+		String commandLine;
+		
+		while ((commandLine = consoleReader.nextLine()) != null) {
+			
+			if (Validator.isValidCommand(commandLine)) {
+				sendCommandToServer(commandLine);
+				readServerReply();
+			}
+		}
+		consoleReader.close();
 	}
 	
 	private void sendCommandToServer(String command) {
@@ -44,20 +60,7 @@ public class Client {
 		}
 		
 	}
-	public void readUserCommandFromConsole() {
-		
-		Scanner consoleReader = new Scanner(System.in);
-		String commandLine;
-		
-		while ((commandLine = consoleReader.nextLine()) != null) {
-			
-			if (Validator.isValidCommand(commandLine)) {
-				sendCommandToServer(commandLine);
-				readServerReply();
-			}
-		}
-		consoleReader.close();
-	}
+	
 	public void readServerReply() {
 		
 		try {

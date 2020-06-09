@@ -14,11 +14,6 @@ public class Session {
 		id = UUID.randomUUID().toString();
 	}
 	
-	public boolean hasExpired() {
-		long timeNow = System.currentTimeMillis();
-		return (creationTime + ttl) < timeNow;
-	}
-	
 	public String getID() {
 		return id;
 	}
@@ -29,4 +24,8 @@ public class Session {
 				TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(ttl)));
 	}
 
+	public boolean hasExpired() {
+		long timeNow = System.currentTimeMillis();
+		return (creationTime + ttl) < timeNow;
+	}
 }

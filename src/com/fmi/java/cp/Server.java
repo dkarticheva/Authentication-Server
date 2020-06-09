@@ -6,7 +6,7 @@ import java.net.Socket;
 
 public class Server {
 	
-	final static int DEFAULT_COMMUNICATION_PORT = 4444;
+	private final static int DEFAULT_COMMUNICATION_PORT = 4444;
 		
 	public static void main(String[] args) {
 		ServerSocket serverSocket = null;

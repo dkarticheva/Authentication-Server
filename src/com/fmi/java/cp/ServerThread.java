@@ -25,6 +25,21 @@ public class ServerThread extends Thread {
 		}
 	}
 	
+	public void run() {
+		while (true) {
+			String input = receiveClientRequest();
+			if (input == null) {
+				break;
+			}
+			
+			// TODO : how to use the file?
+			String dataBaseFileName = "src/usersInfo.txt";
+			
+			CommandResult result = executeParsedClientCommand(input);
+			sendServerMessageToSocket(result.getResultMessage());
+		}
+	}
+	
 	private String receiveClientRequest() {
 		String input = null;
 		try {
@@ -36,16 +51,6 @@ public class ServerThread extends Thread {
 			System.out.println("Issue while receiving data from client");
 		}
 		return input;
-	}
-	
-	private void sendServerMessageToSocket(String message) {
-		
-		PrintWriter socketMessageWriter = new PrintWriter(outputStream, true);
-		int messageSize = message.length();
-		
-		socketMessageWriter.println(messageSize);
-		socketMessageWriter.print(message);
-		socketMessageWriter.flush();
 	}
 	
 	private CommandResult executeParsedClientCommand(String command) {
@@ -69,19 +74,14 @@ public class ServerThread extends Thread {
 		
 		return new CommandResult("Invalid command name");
 	}
-
-	public void run() {
-		while (true) {
-			String input = receiveClientRequest();
-			if (input == null) {
-				break;
-			}
-			
-			// TODO : how to use the file?
-			String dataBaseFileName = "src/usersInfo.txt";
-			
-			CommandResult result = executeParsedClientCommand(input);
-			sendServerMessageToSocket(result.getResultMessage());
-		}
+	
+	private void sendServerMessageToSocket(String message) {
+		
+		PrintWriter socketMessageWriter = new PrintWriter(outputStream, true);
+		int messageSize = message.length();
+		
+		socketMessageWriter.println(messageSize);
+		socketMessageWriter.print(message);
+		socketMessageWriter.flush();
 	}
 }

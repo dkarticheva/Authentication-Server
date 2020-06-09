@@ -2,18 +2,10 @@ package com.fmi.java.cp;
 
 public class ResetPasswordCommand implements Command {
 	
-		// reset-password –-username <username> --old-password <oldPassword> --new-password <newPassword>
+	// reset-password –-username <username> --old-password <oldPassword> --new-password <newPassword>
 	
-		final static int NEWPASSWORD_STARTING_INDEX = 6;
-		final static int OLDPASSWORD_STARTING_INDEX = 4;
-	
-		private static String getOldPassword(String[] commandOptions) {
-			return commandOptions[OLDPASSWORD_STARTING_INDEX];
-		}
-		
-		private static String getNewPassword(String[] commandOptions) {
-			return commandOptions[NEWPASSWORD_STARTING_INDEX];
-		}
+	final static int NEWPASSWORD_STARTING_INDEX = 6;
+	final static int OLDPASSWORD_STARTING_INDEX = 4;
 
 	@Override
 	public CommandResult execute(String[] commandOptions) {
@@ -48,6 +40,14 @@ public class ResetPasswordCommand implements Command {
 		String confirmationMessage = "Password for user %s has been successfully modified\n";
 		resetPasswordResult.setResultMessage(String.format(confirmationMessage, userName));
 		return resetPasswordResult;
+	}
+	
+	private static String getOldPassword(String[] commandOptions) {
+		return commandOptions[OLDPASSWORD_STARTING_INDEX];
+	}
+	
+	private static String getNewPassword(String[] commandOptions) {
+		return commandOptions[NEWPASSWORD_STARTING_INDEX];
 	}
 
 }

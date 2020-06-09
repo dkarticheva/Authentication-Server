@@ -15,12 +15,8 @@ public class CommandResult {
 		resultMessage = commandResult;
 	}
 	
-	public void setResultMessage(String commandResult) {
-		resultMessage = commandResult;
-	}
-	
-	public String getResultMessage() {
-		return resultMessage;
+	public boolean isSuccess() {
+		return success;
 	}
 	
 	// TODO: rename pls! Or remove?
@@ -28,7 +24,12 @@ public class CommandResult {
 		success = result; 
 	}
 	
-	public boolean isSuccess() {
-		return success;
+	public String getResultMessage() {
+		return resultMessage;
 	}
+	
+	public void setResultMessage(String commandResult) {
+		resultMessage = commandResult;
+	}
+	
 }

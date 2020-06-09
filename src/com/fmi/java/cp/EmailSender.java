@@ -16,37 +16,10 @@ public class EmailSender {
 	private static final String emailAddress = "authenticationserver55@gmail.com";
     private static final String emailPassword = "serverJavaProject";
     
-    private static Properties createEmailProperties() {
-    	
-    	Properties emailProperties = new Properties();
-        emailProperties.put("mail.smtp.auth", "true");
-        emailProperties.put("mail.smtp.starttls.enable", "true");
-        emailProperties.put("mail.smtp.host", "smtp.gmail.com");
-        emailProperties.put("mail.smtp.port", "587");
-        
-        return emailProperties;
-    }
     
-    private static Authenticator createAuthenticator() {
-    	return new Authenticator() {
-    		protected PasswordAuthentication getPasswordAuthentication() {
-    			return new PasswordAuthentication(emailAddress, emailPassword);
-    		}
-    	};
-    }
-    
-    private static Session createEmailSession() {
-    	
-    	Properties emailProperties = createEmailProperties();
-    	Authenticator emailAuthenticator = createAuthenticator();
-    	
-    	Session session = javax.mail.Session.getInstance(emailProperties,emailAuthenticator);
-    	return session;
-    }
-	
 	public static void sendEmail(String emailRecipient) {
 		
-      Session session = createEmailSession();
+			Session session = createEmailSession();
 
         try {
 
@@ -66,4 +39,32 @@ public class EmailSender {
             System.out.println("Issue while sending the registration email");
         }
     }
+	
+	private static Session createEmailSession() {
+	    	
+	    Properties emailProperties = createEmailProperties();
+	    Authenticator emailAuthenticator = createAuthenticator();
+	    	
+	    Session session = javax.mail.Session.getInstance(emailProperties,emailAuthenticator);
+	    return session;
+	 }
+	    
+	private static Properties createEmailProperties() {
+	    	
+	    Properties emailProperties = new Properties();
+	    emailProperties.put("mail.smtp.auth", "true");
+	    emailProperties.put("mail.smtp.starttls.enable", "true");
+	    emailProperties.put("mail.smtp.host", "smtp.gmail.com");
+	    emailProperties.put("mail.smtp.port", "587");
+	        
+	    return emailProperties;
+	 }
+	    
+	 private static Authenticator createAuthenticator() {
+	    return new Authenticator() {
+	    	protected PasswordAuthentication getPasswordAuthentication() {
+	    		return new PasswordAuthentication(emailAddress, emailPassword);
+	    	}
+	    };
+	 }
 }

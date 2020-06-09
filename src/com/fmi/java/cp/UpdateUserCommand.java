@@ -4,23 +4,6 @@ public class UpdateUserCommand implements Command {
 	
 	// update-user  -–session-id <session-id>  -–new-username <newUsername> --new-first-name <newFirstName> --new-last-name <newLastName> --new-email <email>. Everything except --session-id is optional.
 
-	private static void updateUserDetailsForUserAccordingOption(User userToUpdate, String[] commandOptions) {
-		
-		for (int i=0; i<commandOptions.length; i+=2) {
-			
-			String optionName = commandOptions[i];
-			String optionValue = commandOptions[i+1];
-			switch(optionName) {
-			
-			case "-–new-username" : userToUpdate.setUsername(optionValue); break;
-			case "--new-first-name": userToUpdate.setFirstName(optionValue); break;
-			case "--new-last-name": userToUpdate.setLastName(optionValue); break;
-			case "--new-email": userToUpdate.setEmail(optionValue); break;
-			  				
-			}
-		}
-	}
-	
 	@Override
 	public CommandResult execute(String[] commandOptions) {
 		
@@ -55,6 +38,23 @@ public class UpdateUserCommand implements Command {
 		String confirmationMessage = "User %s has successfully updated their information\n Session with id %s and ttl %s has been created\n";
 		updateUserResult.setResultMessage(String.format(confirmationMessage, userToUpdate.getUsername(), newSession.getID(), newSession.getTimeToLive()));
 		return updateUserResult;
+	}
+	
+	private static void updateUserDetailsForUserAccordingOption(User userToUpdate, String[] commandOptions) {
+		
+		for (int i=0; i<commandOptions.length; i+=2) {
+			
+			String optionName = commandOptions[i];
+			String optionValue = commandOptions[i+1];
+			switch(optionName) {
+			
+			case "-–new-username" : userToUpdate.setUsername(optionValue); break;
+			case "--new-first-name": userToUpdate.setFirstName(optionValue); break;
+			case "--new-last-name": userToUpdate.setLastName(optionValue); break;
+			case "--new-email": userToUpdate.setEmail(optionValue); break;
+			  				
+			}
+		}
 	}
 
 }

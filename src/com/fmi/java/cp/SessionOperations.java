@@ -7,20 +7,6 @@ public class SessionOperations {
 	
 	private static Map<Session, User> activeSessionsOfUsers;
 	
-	public static void addSessionForUser(Session session, User user) {
-		activeSessionsOfUsers.put(session, user);
-	}
-	
-	public static boolean isSessionValid(String sessionId) {
-		
-		for (Session session : activeSessionsOfUsers.keySet()) {
-			if (session.getID().equals(sessionId)) {
-				return true;
-			}
-		}
-		return false;
-	}
-	
 	public static Session getSessionFromId(String sessionId) {
 		
 		for (Session session : activeSessionsOfUsers.keySet()) {
@@ -37,9 +23,8 @@ public class SessionOperations {
 		return activeSessionsOfUsers.get(userSession);
 	}
 	
-	public static boolean isSessionExpiredForUser(User user) {
-		
-		return activeSessionsOfUsers.containsValue(user);
+	public static void addSessionForUser(Session session, User user) {
+		activeSessionsOfUsers.put(session, user);
 	}
 	
 	public static void removeExpiredSessionWithSessionId(String sessionId) {
@@ -60,5 +45,21 @@ public class SessionOperations {
 			}
 		}
 	}
+	
+	public static boolean isSessionValid(String sessionId) {
+		
+		for (Session session : activeSessionsOfUsers.keySet()) {
+			if (session.getID().equals(sessionId)) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	public static boolean isSessionExpiredForUser(User user) {
+		
+		return activeSessionsOfUsers.containsValue(user);
+	}
+	
 
 }
