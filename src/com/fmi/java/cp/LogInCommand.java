@@ -1,16 +1,18 @@
 package com.fmi.java.cp;
 
-public class LogInCommand implements Command{
+public class LogInCommand implements Command {
+	
+	// login -–username <username> --password <password>
 
 	@Override
 	public CommandResult execute(String[] commandOptions) {
 		
-		String userName = commandOptions[USERNAME_INDEX];
-		String password = commandOptions[PASSWORD_INDEX];
+		String userName = Command.getUsername(commandOptions);
+		String password = Command.getPassword(commandOptions);
 		
 		CommandResult logInResult =  new CommandResult();
 		
-		if (!UserOperations.confirmExistenceOfUserWithUsername(userName)) {
+		if (!UserOperations.doesUserExistWithUsername(userName)) {
 			logInResult.setResultMessage("Wrong username or password!\n");
 			return logInResult;
 		}

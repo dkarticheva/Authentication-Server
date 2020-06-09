@@ -5,16 +5,13 @@ import java.security.NoSuchAlgorithmException;
 
 public class Password {
 	
-	// TODO: clean this
 	private static String hash(String plainTextPassword) {
 		
+		// TODO: this null!
         String hashedPassword = null;
         try {
-        	//Returns a MessageDigest object that implements the specified digest algorithm - in this case MD5.
             MessageDigest mdInstance = MessageDigest.getInstance("MD5"); 
-            //The update method is used for processing the data through the MessageDigest object.
             mdInstance.update(plainTextPassword.getBytes());
-            //The digest method completes the hash computation
             byte[] bytes = mdInstance.digest();
             StringBuilder sb = new StringBuilder();
             for (int i = 0; i < bytes.length ; i++) {
@@ -25,7 +22,7 @@ public class Password {
             hashedPassword = sb.toString();
         }
         catch (NoSuchAlgorithmException e) {
-            System.out.println("Issue with tha hashing algorithm");
+            System.out.println("Issue with that hashing algorithm");
         }
         return hashedPassword;
     }

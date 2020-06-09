@@ -1,19 +1,21 @@
 package com.fmi.java.cp;
 
-public class DeleteUserCommand implements Command{
+
+public class DeleteUserCommand implements Command {
+	
+	// delete-user –username <username>
 
 	@Override
 	public CommandResult execute(String[] commandOptions) {
 		
-		String userName = commandOptions[2];
+		String userName = Command.getUsername(commandOptions);
 		CommandResult deleteUserResult = new CommandResult();
 		
-		if (!UserOperations.confirmExistenceOfUserWithUsername(userName)) {
+		if (!UserOperations.doesUserExistWithUsername(userName)) {
 			deleteUserResult.setResultMessage("Wrong username or password!\n");
 			return deleteUserResult;
 		}
 		
-		// TODO: check existence then get the user!
 		User userToDelete = UserOperations.getUserByUsername(userName);
 		
 		if (SessionOperations.isSessionExpiredForUser(userToDelete)) {

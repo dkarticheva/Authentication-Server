@@ -1,11 +1,30 @@
 package com.fmi.java.cp;
 
 public class UpdateUserCommand implements Command {
+	
+	// update-user  -–session-id <session-id>  -–new-username <newUsername> --new-first-name <newFirstName> --new-last-name <newLastName> --new-email <email>. Everything except --session-id is optional.
 
+	private static void updateUserDetailsForUserAccordingOption(User userToUpdate, String[] commandOptions) {
+		
+		for (int i=0; i<commandOptions.length; i+=2) {
+			
+			String optionName = commandOptions[i];
+			String optionValue = commandOptions[i+1];
+			switch(optionName) {
+			
+			case "-–new-username" : userToUpdate.setUsername(optionValue); break;
+			case "--new-first-name": userToUpdate.setFirstName(optionValue); break;
+			case "--new-last-name": userToUpdate.setLastName(optionValue); break;
+			case "--new-email": userToUpdate.setEmail(optionValue); break;
+			  				
+			}
+		}
+	}
+	
 	@Override
 	public CommandResult execute(String[] commandOptions) {
 		
-		String sessionId = commandOptions[2];
+		String sessionId = Command.getSessionID(commandOptions);
 		
 		CommandResult updateUserResult = new CommandResult();
 		
@@ -24,28 +43,8 @@ public class UpdateUserCommand implements Command {
 		SessionOperations.removeSessionForUser(userToUpdate);
 		UserOperations.removeUser(userToUpdate);
 		
-		// TODO: remove those!
-		int sizeLine = commandOptions.length;
-		final int oneOptionLenght = 5;
-		final int twoOptionLenght = 7;
-		final int threeOptionLenght = 9;
-		final int fourOptionLenght = 11;
-		final int threeWordsLength = 3;
-		final int fiveWordsLength = 5;
-		final int sevenWordsLength = 7;
-		final int nineWordsLength = 9;
-		if (sizeLine >= oneOptionLenght) {
-			UserOperations.setNewUsersDetailsAccordingOption(commandOptions, threeWordsLength, userToUpdate);
-		}
-		if (sizeLine >= twoOptionLenght) {
-			UserOperations.setNewUsersDetailsAccordingOption(commandOptions, fiveWordsLength, userToUpdate);
-		}
-		if (sizeLine >= threeOptionLenght) {
-			UserOperations.setNewUsersDetailsAccordingOption(commandOptions, sevenWordsLength, userToUpdate);
-		}
-		if (sizeLine == fourOptionLenght) {
-			UserOperations.setNewUsersDetailsAccordingOption(commandOptions, nineWordsLength, userToUpdate);
-		}
+		updateUserDetailsForUserAccordingOption(userToUpdate, commandOptions);
+		
 		UserOperations.addUser(userToUpdate);
 		UserOperations.logInUser(userToUpdate);
 		

@@ -1,11 +1,13 @@
 package com.fmi.java.cp;
 
-public class LogOutCommand implements Command{
+public class LogOutCommand implements Command {
+	
+	// logout –session-id <sessionId>
 
 	@Override
 	public CommandResult execute(String[] commandOptions) {
 		
-		String sessionId = commandOptions[2];
+		String sessionId = Command.getSessionID(commandOptions);
 		
 		CommandResult logOutResult = new CommandResult();
 		

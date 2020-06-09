@@ -63,15 +63,10 @@ public class ServerThread extends Thread {
 			case "logout" : return CommandsExecutor.logOut(commandOptions); 
 			
 			case "delete-user" : return CommandsExecutor.deleteUser(commandOptions); 
+			
+			case "login" : return firstOption.equals("-–username")  ? CommandsExecutor.logIn(commandOptions) : CommandsExecutor.logInSesId(commandOptions);
 		}
-		if (commandName.equals("login")) {
-			if (firstOption.equals("-–username")) {
-				return CommandsExecutor.logIn(commandOptions);
-			}
-			else {
-				return CommandsExecutor.logInSesId(commandOptions);
-			}
-		}
+		
 		return new CommandResult("Invalid command name");
 	}
 

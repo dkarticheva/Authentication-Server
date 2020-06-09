@@ -1,19 +1,37 @@
 package com.fmi.java.cp;
 
 public class RegisterCommand implements Command {
+	
+		// register --username <username> --password <password> --first-name <firstName> --last-name <lastName> --email <email> 
+	
+		final static int FIRSTNAME_STARTING_INDEX = 6;
+		final static int LASTNAME_STARTING_INDEX = 8;
+		final static int EMAIL_STARTING_INDEX = 10;
+	
+		private static String getFirstName(String[] commandOptions) {
+			return commandOptions[FIRSTNAME_STARTING_INDEX];
+		}
+		
+		private static String getLastName(String[] commandOptions) {
+			return commandOptions[LASTNAME_STARTING_INDEX];
+		}
+		
+		private static String getEmail(String[] commandOptions) {
+			return commandOptions[EMAIL_STARTING_INDEX];
+		}
 
 	@Override
 	public CommandResult execute(String[] commandOptions) {
 		
-		String userName = commandOptions[USERNAME_INDEX];
-		String password = commandOptions[PASSWORD_INDEX];
-		String firstName = commandOptions[FIRSTNAME_INDEX];
-		String lastName = commandOptions[LASTNAME_INDEX];
-		String email = commandOptions[EMAIL_INDEX];
+		String userName = Command.getUsername(commandOptions);
+		String password = Command.getPassword(commandOptions);
+		String firstName = getFirstName(commandOptions);
+		String lastName = getLastName(commandOptions);
+		String email = getEmail(commandOptions);
 		
 		CommandResult registerResult = new CommandResult();
 		
-		if (UserOperations.isUsernameAlreadyTaken(userName)) {
+		if (UserOperations.doesUserExistWithUsername(userName)) {
 			registerResult.setResultMessage("The username is already taken, please choose a different one\n");
 			return registerResult;
 		}

@@ -14,40 +14,7 @@ public class Client {
 	private Socket communicationSocket;
 	private BufferedReader serverSentDataReader;
 	
-	// TODO: fix this!
-	private Validator validator;
-	
 	final static int DEFAULT_COMMUNICATION_PORT = 4444;
-	
-	private boolean validateOptionsAccordingCommandName(String[] commandLine) {
-		
-		// TODO: omg what is that - fix it!
-		Validator validator = new Validator();
-		
-		String commandName = commandLine[0];
-		switch (commandName) {
-			case "register" : return validator.validateRegisterCommand(commandLine);
-		
-			case "reset-password" : return validator.validateResetPassword(commandLine);
-			
-			case "update-user" : return validator.validateUpdateUser(commandLine);
-			
-			case "logout" : return validator.validateLogOut(commandLine);
-			
-			case "delete-user" : return validator.validateDeleteUser(commandLine);
-			
-		}
-		if (commandName.equals("login")) {
-			String firstOption = commandLine[1];
-			if (firstOption.equals("-–username")) {
-				return validator.validateLogIn(commandLine);
-			}
-			else {
-				return validator.validateLogInSesh(commandLine);
-			}
-		}
-		return false;
-	}
 	
 	public Client(InetAddress socketAddress, int socketPort) {
 		
@@ -56,7 +23,6 @@ public class Client {
 			serverSentDataReader = new BufferedReader(new InputStreamReader(communicationSocket.getInputStream()));
 			System.out.println("Successfully connected to server");
 			
-			validator = new Validator();
 		} catch (IOException e) {
 			System.out.println("Issue while opening socket on address " + socketAddress + " and on port" + socketPort);
 		}
@@ -85,16 +51,7 @@ public class Client {
 		
 		while ((commandLine = consoleReader.nextLine()) != null) {
 			
-			String[] commandNameAndOptions = commandLine.split(" ");
-			String commandName = commandNameAndOptions[0];
-			
-			if (!validator.isValidCommand(commandName)) {
-				System.out.println("Invalid command!");
-			}
-			else if (!validateOptionsAccordingCommandName(commandNameAndOptions)) {
-				System.out.println("Incorrect command options!");
-			}
-			else {
+			if (Validator.isValidCommand(commandLine)) {
 				sendCommandToServer(commandLine);
 				readServerReply();
 			}

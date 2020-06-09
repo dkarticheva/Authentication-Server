@@ -3,6 +3,8 @@ package com.fmi.java.cp;
 import java.util.Arrays;
 import java.util.List;
 
+import com.fmi.java.cp.Validator;
+
 
 public class Validator {
 	
@@ -18,33 +20,70 @@ public class Validator {
 	final static int LASTNAME_INDEX = 7;
 	final static int EMAIL_INDEX = 9;
 	
-	// validation of the commands and their options
-	public boolean isValidCommand(String commandName) {
+	private static boolean isCommandNameValid(String commandName) {
 		return validCommandNames.contains(commandName);
 	}
 	
-	public boolean validateRegisterCommand(String[] words) {
+	private static boolean areCommandOptionsValidAccordingCommandName(String[] commandLine) {
+		
+		String commandName = commandLine[0];
+		String firstOption = commandLine[1];
+		switch (commandName) {
+			case "register" : return Validator.validateRegisterCommand(commandLine);
+		
+			case "reset-password" : return Validator.validateResetPassword(commandLine);
+			
+			case "update-user" : return Validator.validateUpdateUser(commandLine);
+			
+			case "logout" : return Validator.validateLogOut(commandLine);
+			
+			case "delete-user" : return Validator.validateDeleteUser(commandLine);
+			
+			case "login" : return firstOption.equals("-–username") ?  Validator.validateLogIn(commandLine) : Validator.validateLogInSesh(commandLine);
+		}
+		
+		return false;
+	}
+	
+	public static boolean isValidCommand(String commandLine) {
+		
+		String[] commandNameAndOptions = commandLine.split(" ");
+		String commandName = commandNameAndOptions[0];
+		
+		if (!isCommandNameValid(commandName)) {
+			System.out.println("Invalid command!");
+			return false;
+			
+		} else if(!areCommandOptionsValidAccordingCommandName(commandNameAndOptions)) {
+			System.out.println("Incorrect command options!");
+			return false;
+		}
+		
+		return true;
+	}
+	
+	public static boolean validateRegisterCommand(String[] words) {
 		return words[USERNAME_INDEX].equals("--username") && words[PASSWORD_INDEX].equals("--password") 
 				&& words[FIRSTNAME_INDEX].equals("--first-name")
 				&& words[LASTNAME_INDEX].equals("--last-name") && words[EMAIL_INDEX].equals("--email");
 	}
-	public boolean validateLogIn(String[] words) {
+	public static boolean validateLogIn(String[] words) {
 		return words[1].equals("-–username") && words[PASSWORD_INDEX].equals("--password");
 	}
-	public boolean validateLogInSesh(String[] words) {
+	public static boolean validateLogInSesh(String[] words) {
 		return words[1].equals("-–session-id");
 	}
-	public boolean validateResetPassword(String[] words) {
+	public static boolean validateResetPassword(String[] words) {
 		return words[1].equals("–-username") && words[OLDPASSWORD_INDEX].equals("--old-password") 
 				&& words[NEWPASSWORD_INDEX].equals("--new-password");
 	}
-	public boolean validateUpdateUser(String[] words) {
+	public static boolean validateUpdateUser(String[] words) {
 		return words[1].equals("-–session-id"); 
 	}
-	public boolean validateLogOut(String[] words) {
+	public static boolean validateLogOut(String[] words) {
 		return words[1].equals("–session-id"); 
 	}
-	public boolean validateDeleteUser(String[] words) {
+	public static boolean validateDeleteUser(String[] words) {
 		return words[1].equals("–username");
 	}
 }

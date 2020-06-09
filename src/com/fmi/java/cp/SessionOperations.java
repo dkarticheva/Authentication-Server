@@ -3,7 +3,6 @@ package com.fmi.java.cp;
 import java.util.Map;
 import java.util.Map.Entry;
 
-// TODO: change the name!
 public class SessionOperations {
 	
 	private static Map<Session, User> activeSessionsOfUsers;
