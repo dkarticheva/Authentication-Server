@@ -14,14 +14,18 @@ public class ServerThread extends Thread {
 	private InputStream inputStream;
 	private OutputStream outputStream;
 	private BufferedReader reader;
+	private PrintWriter socketMessageWriter;
 	
 	public ServerThread(Socket socket) {
+		
 		try {
 			this.inputStream = socket.getInputStream();
 			this.outputStream = socket.getOutputStream();
 			reader = new BufferedReader(new InputStreamReader(inputStream));
+			socketMessageWriter = new PrintWriter(outputStream, true);
+			
 		} catch (IOException e) {
-			System.out.println("Issue while accessing the socket streams!");
+			System.out.println("There has been an issue while accessing the socket streams!");
 		}
 	}
 	
@@ -41,16 +45,18 @@ public class ServerThread extends Thread {
 	}
 	
 	private String receiveClientRequest() {
-		String input = null;
+		
 		try {
-			input = reader.readLine();
+			return reader.readLine();
+			
 		} catch (SocketException e) {
-			System.out.println("Client closed his socket!");
-			return null;
-		} catch (IOException e1) {
-			System.out.println("Issue while receiving data from client");
-		}
-		return input;
+			System.out.println("The client closed their socket!");
+			
+		} catch (IOException e) {
+			System.out.println("There has been an issue while receiving data from client");
+		} 
+		
+		return null;
 	}
 	
 	private CommandResult executeParsedClientCommand(String command) {
@@ -76,8 +82,6 @@ public class ServerThread extends Thread {
 	}
 	
 	private void sendServerMessageToSocket(String message) {
-		
-		PrintWriter socketMessageWriter = new PrintWriter(outputStream, true);
 		int messageSize = message.length();
 		
 		socketMessageWriter.println(messageSize);

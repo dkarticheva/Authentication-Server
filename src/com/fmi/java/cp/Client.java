@@ -15,16 +15,18 @@ public class Client {
 	
 	private Socket communicationSocket;
 	private BufferedReader serverSentDataReader;
+	private PrintWriter clientDataWriter;
 	
 	public Client(InetAddress socketAddress, int socketPort) {
 		
 		try {
 			communicationSocket = new Socket(socketAddress, socketPort);
 			serverSentDataReader = new BufferedReader(new InputStreamReader(communicationSocket.getInputStream()));
+			clientDataWriter = new PrintWriter(communicationSocket.getOutputStream(), true);
 			System.out.println("Successfully connected to server");
 			
 		} catch (IOException e) {
-			System.out.println("Issue while opening socket on address " + socketAddress + " and on port" + socketPort);
+			System.out.println("There has been an issue while opening socket on address " + socketAddress + " and on port" + socketPort);
 		}
 	}
 	
@@ -46,33 +48,26 @@ public class Client {
 	
 	private void sendCommandToServer(String command) {
 		
-		try {
-			PrintWriter clientDataWriter = new PrintWriter(communicationSocket.getOutputStream(), true);
+		int commandSize = command.length();
 			
-			int commandSize = command.length();
-			
-			clientDataWriter.println(commandSize);
-			clientDataWriter.println(command);
-			clientDataWriter.flush();
-			
-		} catch (IOException e) {
-			System.out.println("Issue while sending the input data to the server!");
-		}
-		
+		clientDataWriter.println(commandSize);
+		clientDataWriter.println(command);
+		clientDataWriter.flush();
 	}
 	
 	public void readServerReply() {
 		
 		try {
-			String serverReply;
 			int serverReplySize = Integer.parseInt(serverSentDataReader.readLine());
 			
-			while (serverReplySize != 0 && (serverReply = serverSentDataReader.readLine()) != null) {
+			while (serverReplySize > 0) {
+				
+				String serverReply = serverSentDataReader.readLine();
 				System.out.println(serverReply);
 				serverReplySize -= serverReply.length() + 1;
 			}
 		} catch (IOException e) {
-			System.out.println("Issue while receiving the output data fro the server!");
+			System.out.println("There has been an issue while receiving the output data from the server!");
 		}
 	}
 	
@@ -80,12 +75,12 @@ public class Client {
 		
 		try {
 			
-			InetAddress  socketAddress = InetAddress.getByName("localhost");
+			InetAddress  socketAddress = InetAddress.getLocalHost();
 			Client client = new Client(socketAddress, DEFAULT_COMMUNICATION_PORT);
 			client.readUserCommandFromConsole();
 			
 		} catch (UnknownHostException e) {
-			System.out.println("The entered host is unknown");
+			System.out.println("The local host name can not be resolved into an address");
 		}
 	}
 
