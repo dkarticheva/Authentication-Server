@@ -35,8 +35,7 @@ public class EmailSender {
             System.out.println("Registration email has been sent to " + emailRecipient);
 
         } catch (MessagingException e) {
-        	e.printStackTrace();
-            System.out.println("Issue while sending the registration email");
+            System.out.println("There has been an issue while sending the registration email");
         }
     }
 	

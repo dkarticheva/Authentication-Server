@@ -5,6 +5,8 @@ import java.security.NoSuchAlgorithmException;
 
 public class Password {
 	
+	private static final String algorithmForHashing = "MD5";
+	
 	public static String hashPassword(String plainTextPassword) {
 		return hash(plainTextPassword);
 	}
@@ -18,8 +20,9 @@ public class Password {
 	private static String hash(String plainTextPassword) {
 		
         try {
-            MessageDigest mdInstance = MessageDigest.getInstance("MD5"); 
+            MessageDigest mdInstance = MessageDigest.getInstance(algorithmForHashing); 
             mdInstance.update(plainTextPassword.getBytes());
+            
             byte[] bytes = mdInstance.digest();
             StringBuilder sb = new StringBuilder();
             for (int i = 0; i < bytes.length ; i++) {
@@ -30,8 +33,9 @@ public class Password {
             return sb.toString();
         }
         catch (NoSuchAlgorithmException e) {
-            System.out.println("Issue with that hashing algorithm");
+            System.out.println("Issue with hashing algorithm " + algorithmForHashing);
         }
-        return null;
+        return "";
     }
+	
 }

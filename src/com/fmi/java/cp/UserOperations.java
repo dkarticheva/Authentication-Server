@@ -66,7 +66,7 @@ public class UserOperations {
 				userDetailsWriter.newLine();
 			}
 		} catch (IOException e) {
-			System.out.println("Issue while opening the database");
+			System.out.println("There has been an issue with opening the database");
 		}
 	}
 
