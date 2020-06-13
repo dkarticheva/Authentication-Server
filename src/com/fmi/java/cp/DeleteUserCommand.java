@@ -11,7 +11,7 @@ public class DeleteUserCommand implements Command {
 		String userName = Command.getUsername(commandOptions);
 		CommandResult deleteUserResult = new CommandResult();
 		
-		if (!UserOperations.doesUserExistWithUsername(userName)) {
+		if (UserOperations.isUsernameIncorrect(userName)) {
 			deleteUserResult.setResultMessage("Wrong username or password!\n");
 			return deleteUserResult;
 		}

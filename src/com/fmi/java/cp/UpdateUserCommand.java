@@ -11,7 +11,7 @@ public class UpdateUserCommand implements Command {
 		
 		CommandResult updateUserResult = new CommandResult();
 		
-		if (!SessionOperations.isSessionValid(sessionId)) {
+		if (SessionOperations.isSessionInvalid(sessionId)) {
 			updateUserResult.setResultMessage("Invalid session id!\n");
 			return updateUserResult;
 		}

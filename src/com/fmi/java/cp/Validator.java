@@ -25,11 +25,11 @@ public class Validator {
 		String[] commandNameAndOptions = commandLine.split(" ");
 		String commandName = commandNameAndOptions[0];
 		
-		if (!isCommandNameValid(commandName)) {
+		if (isCommandNameInvalid(commandName)) {
 			System.out.println("Invalid command!");
 			return false;
 			
-		} else if(!areCommandOptionsValidAccordingCommandName(commandNameAndOptions)) {
+		} else if(areCommandOptionsInvalidAccordingCommandName(commandNameAndOptions)) {
 			System.out.println("Incorrect command options!");
 			return false;
 		}
@@ -37,59 +37,59 @@ public class Validator {
 		return true;
 	}
 	
-	private static boolean isCommandNameValid(String commandName) {
-		return validCommandNames.contains(commandName);
+	private static boolean isCommandNameInvalid(String commandName) {
+		return !validCommandNames.contains(commandName);
 	}
 	
-	private static boolean areCommandOptionsValidAccordingCommandName(String[] commandLine) {
+	private static boolean areCommandOptionsInvalidAccordingCommandName(String[] commandLine) {
 		
 		String commandName = commandLine[0];
 		String firstOption = commandLine[1];
 		switch (commandName) {
-			case "register" : return Validator.validateRegisterCommand(commandLine);
+			case "register" : return isRegisterCommandInvalid(commandLine);
 		
-			case "reset-password" : return Validator.validateResetPassword(commandLine);
+			case "reset-password" : return isResetPasswordCommandInvalid(commandLine);
 			
-			case "update-user" : return Validator.validateUpdateUser(commandLine);
+			case "update-user" : return isUpdateUserCommandInvalid(commandLine);
 			
-			case "logout" : return Validator.validateLogOut(commandLine);
+			case "logout" : return isLogoutCommandInvalid(commandLine);
 			
-			case "delete-user" : return Validator.validateDeleteUser(commandLine);
+			case "delete-user" : return isDeleteUserCommandInvalid(commandLine);
 			
-			case "login" : return firstOption.equals("-–username") ?  Validator.validateLogIn(commandLine) : Validator.validateLogInSesh(commandLine);
+			case "login" : return firstOption.equals("-–username") ?  isLoginCommandInvalid(commandLine) : isLoginCommandWithSessionInvalid(commandLine);
 		}
 		
-		return false;
+		return true;
 	}
 	
-	public static boolean validateRegisterCommand(String[] words) {
-		return words[USERNAME_INDEX].equals("--username") && words[PASSWORD_INDEX].equals("--password") 
+	public static boolean isRegisterCommandInvalid(String[] words) {
+		return !(words[USERNAME_INDEX].equals("--username") && words[PASSWORD_INDEX].equals("--password") 
 				&& words[FIRSTNAME_INDEX].equals("--first-name")
-				&& words[LASTNAME_INDEX].equals("--last-name") && words[EMAIL_INDEX].equals("--email");
+				&& words[LASTNAME_INDEX].equals("--last-name") && words[EMAIL_INDEX].equals("--email"));
 	}
 	
-	public static boolean validateLogIn(String[] words) {
-		return words[1].equals("-–username") && words[PASSWORD_INDEX].equals("--password");
+	public static boolean isLoginCommandInvalid(String[] words) {
+		return !(words[1].equals("-–username") && words[PASSWORD_INDEX].equals("--password"));
 	}
 	
-	public static boolean validateLogInSesh(String[] words) {
-		return words[1].equals("-–session-id");
+	public static boolean isLoginCommandWithSessionInvalid(String[] words) {
+		return !(words[1].equals("-–session-id"));
 	}
 	
-	public static boolean validateResetPassword(String[] words) {
-		return words[1].equals("–-username") && words[OLDPASSWORD_INDEX].equals("--old-password") 
-				&& words[NEWPASSWORD_INDEX].equals("--new-password");
+	public static boolean isResetPasswordCommandInvalid(String[] words) {
+		return !(words[1].equals("–-username") && words[OLDPASSWORD_INDEX].equals("--old-password") 
+				&& words[NEWPASSWORD_INDEX].equals("--new-password"));
 	}
 	
-	public static boolean validateUpdateUser(String[] words) {
-		return words[1].equals("-–session-id"); 
+	public static boolean isUpdateUserCommandInvalid(String[] words) {
+		return !(words[1].equals("-–session-id")); 
 	}
 	
-	public static boolean validateLogOut(String[] words) {
-		return words[1].equals("–session-id"); 
+	public static boolean isLogoutCommandInvalid(String[] words) {
+		return !(words[1].equals("–session-id")); 
 	}
 	
-	public static boolean validateDeleteUser(String[] words) {
-		return words[1].equals("–username");
+	public static boolean isDeleteUserCommandInvalid(String[] words) {
+		return !(words[1].equals("–username"));
 	}
 }

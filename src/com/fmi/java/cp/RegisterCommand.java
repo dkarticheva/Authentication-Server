@@ -19,7 +19,7 @@ public class RegisterCommand implements Command {
 		
 		CommandResult registerResult = new CommandResult();
 		
-		if (UserOperations.doesUserExistWithUsername(userName)) {
+		if (UserOperations.isUsernameTaken(userName)) {
 			registerResult.setResultMessage("The username is already taken, please choose a different one\n");
 			return registerResult;
 		}

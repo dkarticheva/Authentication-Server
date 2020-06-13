@@ -34,14 +34,18 @@ public class UserOperations {
 		loggedInUsers.remove(user.getUsername());
 	}
 	
-	public static boolean doesUserExistWithUsername(String username) {
+	public static boolean isUsernameIncorrect(String username) {
 		
+		return !allUsers.containsKey(username);
+	}
+	
+	public static boolean isUsernameTaken(String username) {
 		return allUsers.containsKey(username);
 	}
 	
-	public static boolean validatePasswordForUser(User user, String password) {
+	public static boolean isPasswordForUserInvalid(String password, User user) {
 		
-		return Password.authenticate(password, user.getPassword());
+		return !Password.authenticate(password, user.getPassword());
 	}
 	
 	public static boolean isUserAlreadyLoggedIn(String userName) {

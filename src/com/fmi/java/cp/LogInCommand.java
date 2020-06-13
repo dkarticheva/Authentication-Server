@@ -12,13 +12,13 @@ public class LogInCommand implements Command {
 		
 		CommandResult logInResult =  new CommandResult();
 		
-		if (!UserOperations.doesUserExistWithUsername(userName)) {
+		if (UserOperations.isUsernameIncorrect(userName)) {
 			logInResult.setResultMessage("Wrong username or password!\n");
 			return logInResult;
 		}
 		
 		User userToLogIn = UserOperations.getUserByUsername(userName);
-		if (!UserOperations.validatePasswordForUser(userToLogIn, password)) {
+		if (UserOperations.isPasswordForUserInvalid(password, userToLogIn)) {
 			logInResult.setResultMessage("Wrong username or password!\n");
 			return logInResult;
 		}

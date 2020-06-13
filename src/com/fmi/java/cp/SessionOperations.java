@@ -46,14 +46,14 @@ public class SessionOperations {
 		}
 	}
 	
-	public static boolean isSessionValid(String sessionId) {
+	public static boolean isSessionInvalid(String sessionId) {
 		
 		for (Session session : activeSessionsOfUsers.keySet()) {
 			if (session.getID().equals(sessionId)) {
-				return true;
+				return false;
 			}
 		}
-		return false;
+		return true;
 	}
 	
 	public static boolean isSessionExpiredForUser(User user) {

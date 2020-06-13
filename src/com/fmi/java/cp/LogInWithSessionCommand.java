@@ -11,7 +11,7 @@ public class LogInWithSessionCommand implements Command {
 		
 		CommandResult logInWithSessionResult = new CommandResult();
 		
-		if (!SessionOperations.isSessionValid(sessionId)) {
+		if (SessionOperations.isSessionInvalid(sessionId)) {
 			logInWithSessionResult.setResultMessage("Invalid session id!\n");
 			return logInWithSessionResult;
 		}

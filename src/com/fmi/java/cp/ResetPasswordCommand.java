@@ -16,13 +16,13 @@ public class ResetPasswordCommand implements Command {
 		
 		CommandResult resetPasswordResult = new CommandResult();
 		
-		if (!UserOperations.doesUserExistWithUsername(userName)) {
+		if (UserOperations.isUsernameIncorrect(userName)) {
 			resetPasswordResult.setResultMessage("Wrong username or password!\n");
 			return resetPasswordResult;
 		}
 		
 		User userToResetPassword = UserOperations.getUserByUsername(userName);
-		if (!UserOperations.validatePasswordForUser(userToResetPassword, oldPassword)) {
+		if (UserOperations.isPasswordForUserInvalid(oldPassword, userToResetPassword)) {
 			resetPasswordResult.setResultMessage("Wrong username or password!\n");
 			return resetPasswordResult; 
 		}

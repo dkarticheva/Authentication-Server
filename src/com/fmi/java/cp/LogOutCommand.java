@@ -11,7 +11,7 @@ public class LogOutCommand implements Command {
 		
 		CommandResult logOutResult = new CommandResult();
 		
-		if (!SessionOperations.isSessionValid(sessionId)) {
+		if (SessionOperations.isSessionInvalid(sessionId)) {
 			logOutResult.setResultMessage("Invalid session id!\n");
 			return logOutResult;
 		}
