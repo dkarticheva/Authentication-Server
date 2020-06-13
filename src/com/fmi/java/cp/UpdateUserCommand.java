@@ -26,7 +26,7 @@ public class UpdateUserCommand implements Command {
 		SessionOperations.removeSessionForUser(userToUpdate);
 		UserOperations.removeUser(userToUpdate);
 		
-		updateUserDetailsForUserAccordingOption(userToUpdate, commandOptions);
+		updateUserDetailsForUserAccordingOptions(userToUpdate, commandOptions);
 		
 		UserOperations.addUser(userToUpdate);
 		UserOperations.logInUser(userToUpdate);
@@ -40,7 +40,7 @@ public class UpdateUserCommand implements Command {
 		return updateUserResult;
 	}
 	
-	private static void updateUserDetailsForUserAccordingOption(User userToUpdate, String[] commandOptions) {
+	private static void updateUserDetailsForUserAccordingOptions(User userToUpdate, String[] commandOptions) {
 		
 		for (int i=0; i<commandOptions.length; i+=2) {
 			

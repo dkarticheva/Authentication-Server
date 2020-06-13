@@ -61,34 +61,34 @@ public class Validator {
 		return true;
 	}
 	
-	public static boolean isRegisterCommandInvalid(String[] words) {
+	private static boolean isRegisterCommandInvalid(String[] words) {
 		return !(words[USERNAME_INDEX].equals("--username") && words[PASSWORD_INDEX].equals("--password") 
 				&& words[FIRSTNAME_INDEX].equals("--first-name")
 				&& words[LASTNAME_INDEX].equals("--last-name") && words[EMAIL_INDEX].equals("--email"));
 	}
 	
-	public static boolean isLoginCommandInvalid(String[] words) {
+	private static boolean isLoginCommandInvalid(String[] words) {
 		return !(words[1].equals("-–username") && words[PASSWORD_INDEX].equals("--password"));
 	}
 	
-	public static boolean isLoginCommandWithSessionInvalid(String[] words) {
+	private static boolean isLoginCommandWithSessionInvalid(String[] words) {
 		return !(words[1].equals("-–session-id"));
 	}
 	
-	public static boolean isResetPasswordCommandInvalid(String[] words) {
+	private static boolean isResetPasswordCommandInvalid(String[] words) {
 		return !(words[1].equals("–-username") && words[OLDPASSWORD_INDEX].equals("--old-password") 
 				&& words[NEWPASSWORD_INDEX].equals("--new-password"));
 	}
 	
-	public static boolean isUpdateUserCommandInvalid(String[] words) {
+	private static boolean isUpdateUserCommandInvalid(String[] words) {
 		return !(words[1].equals("-–session-id")); 
 	}
 	
-	public static boolean isLogoutCommandInvalid(String[] words) {
+	private static boolean isLogoutCommandInvalid(String[] words) {
 		return !(words[1].equals("–session-id")); 
 	}
 	
-	public static boolean isDeleteUserCommandInvalid(String[] words) {
+	private static boolean isDeleteUserCommandInvalid(String[] words) {
 		return !(words[1].equals("–username"));
 	}
 }

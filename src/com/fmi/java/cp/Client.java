@@ -31,7 +31,7 @@ public class Client {
 	}
 	
 	
-	public void readUserCommandFromConsole() {
+	private void readUserCommandFromConsole() {
 		
 		Scanner consoleReader = new Scanner(System.in);
 		String commandLine;
@@ -55,7 +55,7 @@ public class Client {
 		clientDataWriter.flush();
 	}
 	
-	public void readServerReply() {
+	private void readServerReply() {
 		
 		try {
 			int serverReplySize = Integer.parseInt(serverSentDataReader.readLine());
