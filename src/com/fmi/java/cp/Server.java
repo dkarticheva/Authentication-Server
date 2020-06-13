@@ -10,6 +10,11 @@ public class Server {
 		
 	public static void main(String[] args) {
 		
+		manageServerThreads();
+	}
+	
+	private static void manageServerThreads() {
+		
 		ServerSocket serverSocket = null;
 		
 		try {

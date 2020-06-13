@@ -73,11 +73,16 @@ public class Client {
 	
 	public static void main(String[] args) {
 		
+		createClient();
+	}
+	
+	private static void createClient() {
+		
 		try {
-			
 			InetAddress  socketAddress = InetAddress.getLocalHost();
 			Client client = new Client(socketAddress, DEFAULT_COMMUNICATION_PORT);
 			client.readUserCommandFromConsole();
+			
 			
 		} catch (UnknownHostException e) {
 			System.out.println("The local host name can not be resolved into an address");
