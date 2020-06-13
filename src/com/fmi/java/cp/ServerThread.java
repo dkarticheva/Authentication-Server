@@ -36,9 +36,6 @@ public class ServerThread extends Thread {
 				break;
 			}
 			
-			// TODO : how to use the file?
-			String dataBaseFileName = "src/usersInfo.txt";
-			
 			CommandResult result = executeParsedClientCommand(input);
 			sendServerMessageToSocket(result.getResultMessage());
 		}

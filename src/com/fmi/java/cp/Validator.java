@@ -11,7 +11,6 @@ public class Validator {
 	private static List<String> validCommandNames = Arrays.asList("register", "login", "reset-password", "update-user", 
 			"logout", "delete-user");
 	
-	// TODO: remove those!
 	private final static int USERNAME_INDEX = 1;
 	private final static int PASSWORD_INDEX = 3;
 	private final static int OLDPASSWORD_INDEX = 3;

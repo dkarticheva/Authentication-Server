@@ -17,8 +17,6 @@ public class Password {
 	
 	private static String hash(String plainTextPassword) {
 		
-		// TODO: this null!
-        String hashedPassword = null;
         try {
             MessageDigest mdInstance = MessageDigest.getInstance("MD5"); 
             mdInstance.update(plainTextPassword.getBytes());
@@ -29,11 +27,11 @@ public class Password {
             	final int offset = 16;
                 sb.append(Integer.toString((bytes[i] & hexaNumber) + hexaNumber, offset).substring(1));
             }
-            hashedPassword = sb.toString();
+            return sb.toString();
         }
         catch (NoSuchAlgorithmException e) {
             System.out.println("Issue with that hashing algorithm");
         }
-        return hashedPassword;
+        return null;
     }
 }

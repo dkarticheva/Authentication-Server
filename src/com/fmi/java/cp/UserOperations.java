@@ -11,7 +11,7 @@ public class UserOperations {
 	
 	private static Map<String, User> allUsers;
 	private static Map<String, User> loggedInUsers;
-	private static File usersDetails;
+	private static File usersDetails = new File("src/usersInfo.txt");
 	
 	public static User getUserByUsername(String username) {
 		return allUsers.get(username);
