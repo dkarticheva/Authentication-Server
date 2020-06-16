@@ -9,54 +9,54 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class UserOperations {
-	
+
 	private static Map<String, User> allUsers = new HashMap<>();
 	private static Map<String, User> loggedInUsers = new HashMap<>();
 	private static File usersDetails = new File("src/usersInfo.txt");
-	
+
 	public static User getUserByUsername(String username) {
 		return allUsers.get(username);
 	}
-	
+
 	public static void addUser(User user) {
 		allUsers.put(user.getUsername(), user);
 	}
-	
+
 	public static void removeUser(User user) {
 		loggedInUsers.remove(user.getUsername());
 		allUsers.remove(user.getUsername());
 	}
-	
+
 	public static void logInUser(User user) {
 		loggedInUsers.put(user.getUsername(), user);
 	}
-	
+
 	public static void logOutUser(User user) {
 		loggedInUsers.remove(user.getUsername());
 	}
-	
+
 	public static boolean isUsernameIncorrect(String username) {
-		
+
 		return !allUsers.containsKey(username);
 	}
-	
+
 	public static boolean isUsernameTaken(String username) {
 		return allUsers.containsKey(username);
 	}
-	
+
 	public static boolean isPasswordForUserInvalid(String password, User user) {
-		
+
 		return !Password.authenticate(password, user.getPassword());
 	}
-	
+
 	public static boolean isUserAlreadyLoggedIn(String userName) {
 		return loggedInUsers.containsKey(userName);
 	}
-	
+
 	public static void updateUsersDetails() {
-		
+
 		Collection<User> users = allUsers.values();
-		
+
 		try (BufferedWriter userDetailsWriter = new BufferedWriter(new FileWriter(usersDetails))) {
 			for (User user : users) {
 				userDetailsWriter.write(user.getUsername() + " ");
