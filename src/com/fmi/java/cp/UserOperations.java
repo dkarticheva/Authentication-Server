@@ -5,12 +5,13 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Map;
 
 public class UserOperations {
 	
-	private static Map<String, User> allUsers;
-	private static Map<String, User> loggedInUsers;
+	private static Map<String, User> allUsers = new HashMap<>();
+	private static Map<String, User> loggedInUsers = new HashMap<>();
 	private static File usersDetails = new File("src/usersInfo.txt");
 	
 	public static User getUserByUsername(String username) {

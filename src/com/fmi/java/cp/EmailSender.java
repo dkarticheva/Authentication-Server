@@ -13,7 +13,7 @@ import javax.mail.internet.MimeMessage;
 
 public class EmailSender {
 	
-	private static final String emailAddress = "authenticationserver55@gmail.com";
+	private static final String emailAddress = "authenticationserver68@gmail.com";
     private static final String emailPassword = "serverJavaProject";
     
     
@@ -35,7 +35,8 @@ public class EmailSender {
             System.out.println("Registration email has been sent to " + emailRecipient);
 
         } catch (MessagingException e) {
-            System.out.println("There has been an issue while sending the registration email");
+            System.out.println("There has been an issue while sending the registration email to " + emailRecipient + " The issue is: ");
+            System.out.println(e.getMessage());
         }
     }
 	
@@ -54,6 +55,7 @@ public class EmailSender {
 	    emailProperties.put("mail.smtp.auth", "true");
 	    emailProperties.put("mail.smtp.starttls.enable", "true");
 	    emailProperties.put("mail.smtp.host", "smtp.gmail.com");
+	    emailProperties.put("mail.smtp.ssl.trust", "smtp.gmail.com");
 	    emailProperties.put("mail.smtp.port", "587");
 	        
 	    return emailProperties;

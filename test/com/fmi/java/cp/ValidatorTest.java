@@ -149,7 +149,6 @@ class ValidatorTest {
 		assertTrue(Validator.isValidCommand(updateUserCommandLine));
 	}
 	
-	////////////////////////////////////////////////////
 	@Test
 	void testLogoutCommandWithNoOptions() {
 		

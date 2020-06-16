@@ -1,21 +1,12 @@
 package com.fmi.java.cp;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
 public class SessionOperations {
 	
-	private static Map<Session, User> activeSessionsOfUsers;
-	
-	public static Session getSessionFromId(String sessionId) {
-		
-		for (Session session : activeSessionsOfUsers.keySet()) {
-			if (session.getID().equals(sessionId)) {
-				return session;
-			}
-		}
-		return null;
-	}
+	private static Map<Session, User> activeSessionsOfUsers = new HashMap<>();
 	
 	public static User getUserBySessionId(String sessionId) {
 		
@@ -31,6 +22,16 @@ public class SessionOperations {
 		
 		Session expiredSession = getSessionFromId(sessionId);
 		activeSessionsOfUsers.remove(expiredSession);
+	}
+	
+	private static Session getSessionFromId(String sessionId) {
+		
+		for (Session session : activeSessionsOfUsers.keySet()) {
+			if (session.getID().equals(sessionId)) {
+				return session;
+			}
+		}
+		return null;
 	}
 	
 	public static void removeSessionForUser(User user) {
@@ -58,7 +59,25 @@ public class SessionOperations {
 	
 	public static boolean isSessionExpiredForUser(User user) {
 		
-		return activeSessionsOfUsers.containsValue(user);
+		Session usersSession = getSessionForUser(user);
+		if (usersSession == null) {
+			return true;
+		}
+		if (usersSession.hasExpired()) {
+			activeSessionsOfUsers.remove(usersSession);
+			return true;
+		}
+		
+		return false;
+	}
+	
+	static Session getSessionForUser(User user) {
+		for (Entry<Session, User> entry : activeSessionsOfUsers.entrySet()) {
+			if (entry.getValue().equals(user)) {
+				return entry.getKey();
+			}
+		}
+		return null;
 	}
 	
 

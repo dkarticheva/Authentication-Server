@@ -1,2 +1,1 @@
-Dave 40fc3d34ca8167146e3495ec0536677 Dave Smith dave@gmail.com
-Jane f9dfb17b441b718766a466e7c0ba4d52 Jane Smith jane@gmail.com
+jDork c67f35d13234467a6a329d0a928c73a5 John Dork johnDork@abv.bg
