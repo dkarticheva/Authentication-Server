@@ -11,7 +11,10 @@ public class SessionOperations {
 	public static User getUserBySessionId(String sessionId) {
 
 		Session userSession = getSessionFromId(sessionId);
-		return activeSessionsOfUsers.get(userSession);
+		if (userSession != Session.NULL_SESSION) {
+			return activeSessionsOfUsers.get(userSession);
+		}
+		return User.NULL_USER;
 	}
 
 	public static void addSessionForUser(Session session, User user) {
@@ -21,7 +24,9 @@ public class SessionOperations {
 	public static void removeExpiredSessionWithSessionId(String sessionId) {
 
 		Session expiredSession = getSessionFromId(sessionId);
-		activeSessionsOfUsers.remove(expiredSession);
+		if (expiredSession != Session.NULL_SESSION) {
+			activeSessionsOfUsers.remove(expiredSession);
+		}
 	}
 
 	private static Session getSessionFromId(String sessionId) {
@@ -31,7 +36,7 @@ public class SessionOperations {
 				return session;
 			}
 		}
-		return null;
+		return Session.NULL_SESSION;
 	}
 
 	public static void removeSessionForUser(User user) {
@@ -60,7 +65,7 @@ public class SessionOperations {
 	public static boolean isSessionExpiredForUser(User user) {
 
 		Session usersSession = getSessionForUser(user);
-		if (usersSession == null) {
+		if (usersSession == Session.NULL_SESSION) {
 			return true;
 		}
 		if (usersSession.hasExpired()) {
@@ -77,7 +82,7 @@ public class SessionOperations {
 				return entry.getKey();
 			}
 		}
-		return null;
+		return Session.NULL_SESSION;
 	}
 
 }

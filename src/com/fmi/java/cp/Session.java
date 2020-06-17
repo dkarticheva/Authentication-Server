@@ -4,10 +4,16 @@ import java.util.concurrent.TimeUnit;
 import java.util.UUID;
 
 public class Session {
-
+	
 	private String id;
 	private long creationTime;
 	private final long ttl = 90_000;
+	
+	public static Session NULL_SESSION = new Session("");
+	
+	private Session(String id) {
+		this.id = id;
+	}
 
 	public Session() {
 		creationTime = System.currentTimeMillis();

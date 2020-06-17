@@ -32,7 +32,7 @@ public class ServerThread extends Thread {
 	public void run() {
 		while (true) {
 			String input = receiveClientRequest();
-			if (input == null) {
+			if (input.isEmpty()) {
 				break;
 			}
 
@@ -53,7 +53,7 @@ public class ServerThread extends Thread {
 			System.out.println("There has been an issue while receiving data from client");
 		}
 
-		return null;
+		return "";
 	}
 
 	private CommandResult executeParsedClientCommand(String command) {

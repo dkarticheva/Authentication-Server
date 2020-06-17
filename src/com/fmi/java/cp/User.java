@@ -7,6 +7,8 @@ public class User {
 	private String firstName;
 	private String lastName;
 	private String email;
+	
+	public static User NULL_USER = new User("","","","","");
 
 	public User(String username, String password, String firstName, String lastName, String email) {
 		this.username = username;
