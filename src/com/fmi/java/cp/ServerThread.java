@@ -78,7 +78,7 @@ public class ServerThread extends Thread {
 			return CommandsExecutor.deleteUser(commandOptions);
 
 		case "login":
-			return firstOption.equals("-–username") ? CommandsExecutor.logIn(commandOptions)
+			return firstOption.equals(CommandOption.USERNAME.label) ? CommandsExecutor.logIn(commandOptions)
 					: CommandsExecutor.logInSesId(commandOptions);
 		}
 

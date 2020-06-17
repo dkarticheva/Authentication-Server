@@ -81,42 +81,42 @@ public class Validator {
 		return true;
 	}
 
-	private static boolean isRegisterCommandInvalid(String[] words) {
-		return !(words.length == REGISTER_COMMAND_LENGTH && words[USERNAME_INDEX].equals(CommandOption.USERNAME.label)
-				&& words[PASSWORD_INDEX].equals(CommandOption.PASSWORD.label)
-				&& words[FIRSTNAME_INDEX].equals(CommandOption.FIRST_NAME.label)
-				&& words[LASTNAME_INDEX].equals(CommandOption.LAST_NAME.label)
-				&& words[EMAIL_INDEX].equals(CommandOption.EMAIL.label));
+	private static boolean isRegisterCommandInvalid(String[] commandLine) {
+		return !(commandLine.length == REGISTER_COMMAND_LENGTH && commandLine[USERNAME_INDEX].equals(CommandOption.USERNAME.label)
+				&& commandLine[PASSWORD_INDEX].equals(CommandOption.PASSWORD.label)
+				&& commandLine[FIRSTNAME_INDEX].equals(CommandOption.FIRST_NAME.label)
+				&& commandLine[LASTNAME_INDEX].equals(CommandOption.LAST_NAME.label)
+				&& commandLine[EMAIL_INDEX].equals(CommandOption.EMAIL.label));
 	}
 
-	private static boolean isLoginCommandInvalid(String[] words) {
-		return !(words.length == LOGIN_COMMAND_LENGTH && words[USERNAME_INDEX].equals(CommandOption.USERNAME.label)
-				&& words[PASSWORD_INDEX].equals(CommandOption.PASSWORD.label));
+	private static boolean isLoginCommandInvalid(String[] commandLine) {
+		return !(commandLine.length == LOGIN_COMMAND_LENGTH && commandLine[USERNAME_INDEX].equals(CommandOption.USERNAME.label)
+				&& commandLine[PASSWORD_INDEX].equals(CommandOption.PASSWORD.label));
 	}
 
-	private static boolean isLoginCommandWithSessionInvalid(String[] words) {
-		return !(words.length == LOGIN_SESSION_LENGTH && words[SESSIONID_INDEX].equals(CommandOption.SESSION_ID.label));
+	private static boolean isLoginCommandWithSessionInvalid(String[] commandLine) {
+		return !(commandLine.length == LOGIN_SESSION_LENGTH && commandLine[SESSIONID_INDEX].equals(CommandOption.SESSION_ID.label));
 	}
 
-	private static boolean isResetPasswordCommandInvalid(String[] words) {
-		return !(words.length == RESET_PASSWORD_COMMAND_LENGTH
-				&& words[USERNAME_INDEX].equals(CommandOption.USERNAME.label)
-				&& words[OLDPASSWORD_INDEX].equals(CommandOption.OLD_PASSWORD.label)
-				&& words[NEWPASSWORD_INDEX].equals(CommandOption.NEW_PASSWORD.label));
+	private static boolean isResetPasswordCommandInvalid(String[] commandLine) {
+		return !(commandLine.length == RESET_PASSWORD_COMMAND_LENGTH
+				&& commandLine[USERNAME_INDEX].equals(CommandOption.USERNAME.label)
+				&& commandLine[OLDPASSWORD_INDEX].equals(CommandOption.OLD_PASSWORD.label)
+				&& commandLine[NEWPASSWORD_INDEX].equals(CommandOption.NEW_PASSWORD.label));
 	}
 
-	private static boolean isUpdateUserCommandInvalid(String[] words) {
+	private static boolean isUpdateUserCommandInvalid(String[] commandLine) {
 
-		if (words.length < MIN_UPDATE_USER_COMMAND_LENGTH) {
+		if (commandLine.length < MIN_UPDATE_USER_COMMAND_LENGTH) {
 			return true;
 		}
 
 		List<String> possibleOptionNames = CommandOption.getAllCommandsOptions();
 
-		for (int i = words.length - 1; i >= 1; i -= 2) {
+		for (int i = commandLine.length - 1; i >= 1; i -= 2) {
 
-			String optionValue = words[i];
-			String optionName = words[i - 1];
+			String optionValue = commandLine[i];
+			String optionName = commandLine[i - 1];
 
 			if (optionValue.isEmpty() || !possibleOptionNames.contains(optionName)) {
 				return true;
@@ -125,14 +125,14 @@ public class Validator {
 		return false;
 	}
 
-	private static boolean isLogoutCommandInvalid(String[] words) {
-		return !(words.length == LOGOUT_USER_COMMAND_LENGTH
-				&& words[SESSIONID_INDEX].equals(CommandOption.SESSION_ID.label));
+	private static boolean isLogoutCommandInvalid(String[] commandLine) {
+		return !(commandLine.length == LOGOUT_USER_COMMAND_LENGTH
+				&& commandLine[SESSIONID_INDEX].equals(CommandOption.SESSION_ID.label));
 	}
 
-	private static boolean isDeleteUserCommandInvalid(String[] words) {
-		return !(words.length == DELETE_USER_COMMAND_LENGTH
-				&& words[USERNAME_INDEX].equals(CommandOption.USERNAME.label));
+	private static boolean isDeleteUserCommandInvalid(String[] commandLine) {
+		return !(commandLine.length == DELETE_USER_COMMAND_LENGTH
+				&& commandLine[USERNAME_INDEX].equals(CommandOption.USERNAME.label));
 	}
 
 }
