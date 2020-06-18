@@ -13,7 +13,7 @@ public class ServerThread extends Thread {
 
 	private InputStream inputStream;
 	private OutputStream outputStream;
-	private BufferedReader reader;
+	private BufferedReader socketMessageReader;
 	private PrintWriter socketMessageWriter;
 
 	public ServerThread(Socket socket) {
@@ -21,7 +21,7 @@ public class ServerThread extends Thread {
 		try {
 			this.inputStream = socket.getInputStream();
 			this.outputStream = socket.getOutputStream();
-			reader = new BufferedReader(new InputStreamReader(inputStream));
+			socketMessageReader = new BufferedReader(new InputStreamReader(inputStream));
 			socketMessageWriter = new PrintWriter(outputStream, true);
 
 		} catch (IOException e) {
@@ -44,7 +44,7 @@ public class ServerThread extends Thread {
 	private String receiveClientRequest() {
 
 		try {
-			return reader.readLine();
+			return socketMessageReader.readLine();
 
 		} catch (SocketException e) {
 			System.out.println("The client closed their socket!");

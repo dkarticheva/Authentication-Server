@@ -22,7 +22,7 @@ public class EmailSender {
 		try {
 
 			Message message = new MimeMessage(session);
-			message.setFrom(new InternetAddress("authenticationserver55@gmail.com"));
+			message.setFrom(new InternetAddress(emailAddress));
 			message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(emailRecipient));
 			message.setSubject("Automatically generated registration email");
 			message.setText(
